@@ -9,19 +9,44 @@ const { page = {} } = Astro.props;
       <p class="welcome-subtitle">{page.subtitle}</p>
     </div>
 
-    <div class="dashboard-clock-card">
+    <section class="dashboard-clock-card global-tools-card" aria-labelledby="global-tools-title">
       <div class="clock-header">
         <div class="clock-meta">
-          <div class="clock-greeting" id="dashboard-greeting">Hello</div>
-          <div class="clock-date" id="dashboard-date">Mon, Jan 01</div>
+          <h2 class="global-tools-title" id="global-tools-title">出海工具</h2>
+          <p class="global-tools-subtitle">拓展全球市场的常用入口</p>
         </div>
-        <div class="clock-week" id="dashboard-week">Week 1</div>
+        <span class="global-tools-mark fas fa-arrow-up-right-from-square" aria-hidden="true"></span>
       </div>
-
-      <div class="clock-main">
-        <div class="clock-time" id="dashboard-clock">00:00</div>
+      <div class="global-tools-grid">
+        <a
+          class="global-tool-link"
+          href="https://trends.google.com/trends/"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><span class="fas fa-chart-line" aria-hidden="true"></span>Google趋势</a
+        >
+        <a
+          class="global-tool-link"
+          href="https://www.similarweb.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><span class="fas fa-globe" aria-hidden="true"></span>SimilarWeb</a
+        >
+        <a
+          class="global-tool-link"
+          href="https://search.google.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><span class="fas fa-magnifying-glass-chart" aria-hidden="true"></span>GSC</a
+        >
+        <a
+          class="global-tool-link"
+          href="https://developers.google.com/search/docs/fundamentals/get-started-developers?hl=zh-cn"
+          target="_blank"
+          rel="noopener noreferrer"><span class="fas fa-book-open" aria-hidden="true"></span>SEO</a
+        >
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="dashboard-stats">
@@ -59,45 +84,6 @@ const { page = {} } = Astro.props;
 
 <script is:inline>
   (function () {
-    function getWeekNumber(d) {
-      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-    }
-
-    function getGreeting(hour) {
-      if (hour < 5) return 'Good Night';
-      if (hour < 12) return 'Good Morning';
-      if (hour < 18) return 'Good Afternoon';
-      return 'Good Evening';
-    }
-
-    function updateDashboardClock() {
-      var clockEl = document.getElementById('dashboard-clock');
-      var dateEl = document.getElementById('dashboard-date');
-      var greetingEl = document.getElementById('dashboard-greeting');
-      var weekEl = document.getElementById('dashboard-week');
-      if (!clockEl || !dateEl) return;
-
-      var now = new Date();
-      clockEl.textContent = now.toLocaleTimeString('en-US', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      dateEl.textContent = now.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-      });
-      if (greetingEl) greetingEl.textContent = getGreeting(now.getHours());
-      if (weekEl) weekEl.textContent = 'Week ' + getWeekNumber(now);
-    }
-
-    setInterval(updateDashboardClock, 1000);
-    updateDashboardClock();
-
     var TODO_STORAGE_KEY = 'menav_todos_v1';
 
     window.menavTodoApp = {

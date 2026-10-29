@@ -1,4 +1,4 @@
-/* Dashboard (Clock & Todo) */
+/* Dashboard (Global Tools & Todo) */
 
 /* =========================================
    Home Dashboard Styles
@@ -25,7 +25,7 @@
   }
 }
 
-/* --- Left Column: Welcome & Clock --- */
+/* --- Left Column: Welcome & Global Tools --- */
 .dashboard-intro {
   display: flex;
   flex-direction: column;
@@ -87,7 +87,7 @@
   }
 }
 
-/* Clock Card - Apple Style: Flat + Soft Shadow */
+/* Global Tools Card - Apple Style: Flat + Soft Shadow */
 .dashboard-clock-card {
   position: relative;
   background-color: var(--card-bg-gradient-1);
@@ -140,6 +140,63 @@ html.light-theme .dashboard-clock-card {
   line-height: 1;
   font-family: var(--font-body);
   letter-spacing: -0.02em;
+}
+
+.global-tools-title {
+  margin: 0;
+  color: var(--text-bright);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.global-tools-subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.global-tools-mark {
+  color: var(--accent-color);
+  opacity: 0.8;
+}
+
+.global-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.global-tool-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.global-tool-link span {
+  color: var(--accent-color);
+}
+
+.global-tool-link:hover {
+  background: var(--card-bg-gradient-1);
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.global-tool-link:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .clock-greeting {
@@ -345,10 +402,18 @@ html.light-theme .dashboard-panel {
 /* Light Mode Overrides for Specific Dashboard Colors if needed */
 
 @media (max-width: 768px) {
-  /* 移动端隐藏首页的时间卡片和Todo面板 */
-  .dashboard-clock-card,
+  /* 移动端保留紧凑的出海工具入口，隐藏 Todo 面板 */
   .dashboard-stats {
     display: none !important;
+  }
+
+  .global-tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .global-tool-link {
+    padding: 0.65rem;
+    font-size: 0.75rem;
   }
 
   /* 调整移动端首页欢迎语布局 */
