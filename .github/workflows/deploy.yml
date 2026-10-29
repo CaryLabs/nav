@@ -132,6 +132,15 @@ jobs:
             # exit 1
           fi
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser contract test (subpath /menav)
+        env:
+          # 与构建期一致的部署基路径，验证生产部署场景的路由契约
+          MENAV_BASE_PATH: /menav
+        run: npm run test:browser
+
       # GitHub Pages 部署步骤（仅在启用时执行）
       # 说明：
       # - 如果你使用 Vercel/Cloudflare Pages 等第三方平台部署，可以跳过这些步骤

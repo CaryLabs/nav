@@ -110,3 +110,12 @@ test('构建：每个导航页都应产出独立的静态路由文件', () => {
   assert.ok(routePage.includes('getStaticPaths'), '页面路由必须在构建期展开');
   assert.ok(routePage.includes('buildRenderData'), '页面路由应复用统一渲染数据');
 });
+
+test('SSR：应输出 canonical 收敛首页与路径式页面的重复内容', () => {
+  const layout = read('src/layouts/DefaultLayout.astro');
+  assert.ok(layout.includes('rel="canonical"'), '布局应输出 canonical 链接');
+
+  const renderProps = read('src/lib/view-data/render-props.ts');
+  assert.ok(renderProps.includes('siteRootUrl('), '首页 canonical 应收敛到根路径');
+  assert.ok(renderProps.includes('pageUrl('), '非首页 canonical 应指向自身路径式 URL');
+});

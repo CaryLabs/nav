@@ -20,6 +20,7 @@ interface Props {
   currentYear?: number;
   runtimeConfigJson?: string;
   version?: string;
+  canonicalUrl?: string;
 }
 
 const {
@@ -32,6 +33,7 @@ const {
   currentYear,
   runtimeConfigJson = '{}',
   version = '',
+  canonicalUrl = '',
 } = Astro.props;
 
 const site = config.site || {};
@@ -55,6 +57,7 @@ const fontAwesomePreload = `<link rel="preload" href="${fontAwesomeCssUrl}" as="
     <meta name="menav-version" content={version} />
     <title data-editable="site-title">{site.title}</title>
     <meta name="description" content={site.description} data-editable="site-description" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="author" content={site.author} data-editable="site-author" />
     <link rel="icon" href={faviconUrl} type="image/x-icon" />
     <link rel="shortcut icon" href={faviconUrl} type="image/x-icon" />

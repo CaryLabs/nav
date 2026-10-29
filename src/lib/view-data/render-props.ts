@@ -5,6 +5,7 @@ import { loadConfig } from '../config/index.ts';
 import { generateFontCss, generateFontLinks } from '../html/fonts.ts';
 import { buildSiteModel } from '../site-model/index.ts';
 import { collectSiteExternalData } from '../site-model/external-data.ts';
+import { pageUrl, siteRootUrl } from '../urls.ts';
 
 export type RenderData = {
   config: SiteModel['config'];
@@ -16,6 +17,7 @@ export type RenderData = {
   currentYear: number;
   runtimeConfigJson: string;
   version: string;
+  canonicalUrl: string;
 };
 
 let cachedModel: SiteModel | null = null;
@@ -55,6 +57,13 @@ function buildRenderData(activePageId?: string): RenderData {
     ? (targetNavigation as NavigationItem[])
     : model.navigationData;
 
+  // 规范 URL：首页（含根路径与 /page/<homePageId>/）统一收敛到站点根路径，
+  // 其余页面收敛到自身路径式 URL，避免重复内容
+  const homePageId = model.config.homePageId || '';
+  const canonicalPageId = targetPageId || homePageId;
+  const canonicalUrl =
+    canonicalPageId === homePageId ? siteRootUrl() : pageUrl(canonicalPageId);
+
   return {
     config: model.config,
     pages,
@@ -65,6 +74,7 @@ function buildRenderData(activePageId?: string): RenderData {
     currentYear: model.meta.generatedAt.getFullYear(),
     runtimeConfigJson: model.runtimeConfigJson,
     version: model.meta.version,
+    canonicalUrl,
   };
 }
 

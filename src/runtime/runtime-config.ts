@@ -42,8 +42,8 @@ export { getRuntimeConfig };
 /**
  * 站点部署基路径（不含尾斜杠；根路径部署返回空串）。
  *
- * 优先读 <html data-base-path>（构建期由布局写入，空串也视为有效值），
- * 其次读注入的 runtime config，最后退回根路径，保证任何异常都不会拼错 URL。
+ * 唯一真源为 <html data-base-path>（构建期由布局无条件写入，空串也视为有效值）；
+ * 读取失败时回退根路径，保证任何异常都不会拼错 URL。
  */
 function getBasePath(): string {
   try {
@@ -52,16 +52,7 @@ function getBasePath(): string {
       return normalizeBasePath(docEl.getAttribute(BASE_PATH_ATTRIBUTE));
     }
   } catch {
-    // 忽略 DOM 读取异常，继续回退
-  }
-
-  try {
-    const config = getRuntimeConfig();
-    if (config && config.data) {
-      return normalizeBasePath(config.data.basePath);
-    }
-  } catch {
-    // 忽略配置解析异常，回退根路径
+    // 忽略 DOM 读取异常，回退根路径
   }
 
   return '';
