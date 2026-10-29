@@ -1,0 +1,26 @@
+---
+import DefaultLayout from '../../layouts/DefaultLayout.astro';
+import { loadConfig } from '../../lib/config/index.ts';
+import { isValidPageId } from '../../lib/config/page-id.ts';
+import { buildRenderData } from '../../lib/view-data/render-props.ts';
+
+/**
+ * 为每个导航页生成真实静态文件：dist/page/<id>/index.html。
+ *
+ * GitHub Pages 只按精确路径提供静态文件、没有 rewrite，因此路径式 URL
+ * （/page/<id>/）必须由构建期落盘保证 200，不能用 404.html 兜底。
+ */
+export function getStaticPaths() {
+  const config = loadConfig();
+  const ids = (Array.isArray(config.navigation) ? config.navigation : [])
+    .map((item) => String(item && item.id !== undefined && item.id !== null ? item.id : '').trim())
+    .filter((id) => isValidPageId(id));
+
+  return Array.from(new Set(ids)).map((pageId) => ({ params: { pageId } }));
+}
+
+const { pageId } = Astro.params;
+const renderData = buildRenderData(String(pageId || ''));
+---
+
+<DefaultLayout {...renderData} />

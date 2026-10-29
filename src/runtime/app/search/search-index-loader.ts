@@ -5,8 +5,19 @@ const { normalizeIndexItem } = require('./index-item.ts') as {
   normalizeIndexItem: (raw: unknown) => RuntimeSearchIndexItem | null;
 };
 
+const { withBasePath } = require('../../../shared/base-path.ts') as typeof import('../../../shared/base-path');
+const { getBasePath } = require('../../runtime-config.ts') as typeof import('../../runtime-config');
+
 const SEARCH_INDEX_SCHEMA_VERSION = 1;
-const SEARCH_INDEX_URL = './search-index.json';
+const SEARCH_INDEX_FILE = 'search-index.json';
+
+/**
+ * 索引地址必须跟随部署基路径：路径式路由下页面位于 /page/<id>/，
+ * 相对路径 './search-index.json' 会指向 /page/<id>/search-index.json 而 404。
+ */
+function getSearchIndexUrl(): string {
+  return withBasePath(getBasePath(), SEARCH_INDEX_FILE);
+}
 
 async function loadBuildSearchIndex(state: RuntimeState): Promise<void> {
   if (state.searchIndex.initialized || state.searchIndex.loading) return;
@@ -14,7 +25,7 @@ async function loadBuildSearchIndex(state: RuntimeState): Promise<void> {
   state.searchIndex.loading = true;
 
   try {
-    const response = await fetch(SEARCH_INDEX_URL, { cache: 'no-cache' });
+    const response = await fetch(getSearchIndexUrl(), { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const payload = (await response.json()) as SearchIndexPayload;
@@ -45,6 +56,6 @@ async function loadBuildSearchIndex(state: RuntimeState): Promise<void> {
 
 module.exports = {
   SEARCH_INDEX_SCHEMA_VERSION,
-  SEARCH_INDEX_URL,
+  getSearchIndexUrl,
   loadBuildSearchIndex,
 };

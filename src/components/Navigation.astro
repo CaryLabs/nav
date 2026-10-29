@@ -1,5 +1,6 @@
 ---
 import type { NavigationItem } from '../types/config';
+import { pageUrl } from '../lib/urls.ts';
 
 interface Props {
   navigation?: NavigationItem[];
@@ -14,7 +15,7 @@ const visibleNavigation = navigation.filter((item) => !item.hidden);
     visibleNavigation.map((item) => (
       <div class="nav-item-wrapper">
         <a
-          href={`?page=${item.id}`}
+          href={pageUrl(item.id)}
           class:list={['nav-item', item.isActive && 'active', item.active && 'active']}
           data-page={item.id}
           data-type="nav-item"
@@ -36,7 +37,7 @@ const visibleNavigation = navigation.filter((item) => !item.hidden);
               const categoryId = submenuItem.slug || submenuItem.name;
               return (
                 <a
-                  href={`?page=${item.id}#${categoryId}`}
+                  href={pageUrl(item.id, categoryId)}
                   class="submenu-item"
                   data-page={item.id}
                   data-category={submenuItem.name}

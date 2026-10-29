@@ -149,7 +149,7 @@ MeNav 配置系统采用"完全替换"策略（不合并），按以下优先级
 7. **导航**
    - `navigation[]`：数组；每项支持 `id`、`name`、`icon` 字符串，以及可选的 `hidden` 布尔值与 `submenu` 子菜单数组
    - `id` 必填、唯一，必须匹配 `^[a-z][a-z0-9-]*$`，并与 `pages/<id>.yml` 对应（例如 `id: common` 对应 `pages/common.yml`）
-   - `hidden: true` 用于隐藏页：页面仍可通过 `/?page=<id>` 访问，也会进入运行时路由和搜索索引，但不会显示在侧边栏主导航或子菜单中
+   - `hidden: true` 用于隐藏页：页面仍可通过 `/page/<id>/` 访问，也会进入运行时路由和搜索索引，但不会显示在侧边栏主导航或子菜单中
    - 默认首页由 `navigation` 数组顺序决定：**第一项即为首页（默认打开页）**，不再使用 `active` 字段
    - 图标使用 Font Awesome 类名字符串（例如 `fas fa-home`、`fab fa-github`）
    - 导航显示顺序与数组顺序一致，可通过调整数组顺序改变导航顺序
@@ -355,7 +355,7 @@ navigation:
   - name: '实验页'
     icon: 'fas fa-flask'
     id: 'labs'
-    hidden: true # 不显示在侧边栏，但可通过 /?page=labs 访问
+    hidden: true # 不显示在侧边栏，但可通过 /page/labs/ 访问
 ```
 
 ### 通用页面配置示例（例如 common.yml）

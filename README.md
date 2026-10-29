@@ -140,7 +140,15 @@ npm run dev
 
 开发服务器默认从 `http://localhost:5173` 启动；若默认端口被占用，会自动尝试后续端口。需要固定端口时可设置 `PORT=5174 npm run dev` 或 `MENAV_PORT=5174 npm run dev`，显式端口被占用会直接报错。
 
-页面深链接统一使用 `/?page=<页面ID>`，分类定位使用 `/?page=<页面ID>#<分类slug>`。未知路径不会自动回跳，静态部署时请分享上述查询参数形式的 URL。
+页面深链接统一使用路径式 URL：`/page/<页面ID>/`，分类定位使用 `/page/<页面ID>/#<分类slug>`。构建期为每个导航页产出独立静态文件（`dist/page/<id>/index.html`），因此静态托管下直接访问也返回 200。旧式 `/?page=<页面ID>` 链接仍可打开，加载后会自动迁移为路径式 URL。
+
+部署在子路径（如 GitHub Pages 项目站点 `/menav/`）时，构建前设置基路径环境变量：
+
+```bash
+MENAV_BASE_PATH=/menav npm run build
+```
+
+未设置时按根路径部署处理；`npm run dev` 也遵循同一变量。
 
 ```bash
 # 离线启动开发服务器（不刷新联网缓存）

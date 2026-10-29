@@ -40,6 +40,8 @@ export type MenavRuntimeConfig = {
     homePageId: string | null;
     pageRegistry: PageRegistryItem[];
     pageTemplates: Record<string, string>;
+    /** 站点部署基路径（不含尾斜杠；根路径部署为空串） */
+    basePath?: string;
     site?: {
       security?: {
         allowedSchemes?: unknown;

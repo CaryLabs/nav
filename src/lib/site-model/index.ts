@@ -13,6 +13,7 @@ import { applyRepoMetaToCategories } from '../cache/projects.ts';
 import { getSubmenuForNavItem, resolveTemplateNameForPage } from '../config/page-template.ts';
 import { makeJsonSafeForHtmlScript } from '../config/runtime-config.ts';
 import { assignCategorySlugs } from '../config/slugs.ts';
+import { getBasePath } from '../urls.ts';
 import { buildArticlesCategoriesByPageCategories, buildProjectsMeta } from './external-data.ts';
 import { normalizeText, toCardViewModel } from './card.ts';
 
@@ -253,6 +254,7 @@ function buildRuntimeConfig(
       homePageId: config.homePageId || null,
       pageRegistry,
       pageTemplates,
+      basePath: getBasePath(),
       site: Array.isArray(allowedSchemes) ? { security: { allowedSchemes } } : undefined,
     },
   };

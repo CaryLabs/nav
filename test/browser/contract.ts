@@ -3,6 +3,10 @@ const path = require('node:path');
 
 const { chromium } = require('playwright');
 const { startServer } = require('../../scripts/serve-dist.ts');
+const { normalizeBasePath } = require('../../src/shared/base-path.ts');
+
+// 与构建期一致的部署基路径：设置 MENAV_BASE_PATH 时契约按子路径访问
+const BASE_PATH = normalizeBasePath(process.env.MENAV_BASE_PATH || '');
 const { createLogger, startTimer } = require('../../src/lib/logging/logger.ts');
 
 const log = createLogger('browser-contract');
@@ -90,7 +94,31 @@ async function runRouteContract(page, baseUrl) {
   }));
   assert.equal(afterClick.activePageId, routeState.targetPageId);
   assert.equal(afterClick.activeNavId, routeState.targetPageId);
-  assert.match(afterClick.path, new RegExp(`[?&]page=${routeState.targetPageId}`));
+  assert.equal(
+    afterClick.path.startsWith(`${BASE_PATH}/page/${routeState.targetPageId}/`),
+    true,
+    `页面切换应写入路径式 URL，实际为 ${afterClick.path}`
+  );
+
+  // 深链接：直接打开 /page/<id>/ 时 SSR 即应为该页 active，且样式/脚本按基路径加载成功
+  await openPage(page, baseUrl, `/page/${routeState.targetPageId}/`);
+  const deepLink = await page.evaluate(() => ({
+    activePageId: document.querySelector('.page.active')?.id || '',
+    activeNavId: document.querySelector('.nav-item.active')?.getAttribute('data-page') || '',
+    pathname: location.pathname,
+    stylesheetLoaded: Array.from(document.styleSheets).some((sheet) => {
+      if (!sheet.href || !sheet.href.includes('/assets/style.css')) return false;
+      try {
+        return sheet.cssRules.length > 0;
+      } catch {
+        return false;
+      }
+    }),
+  }));
+  assert.equal(deepLink.activePageId, routeState.targetPageId, '深链接 SSR 应直接命中目标页面');
+  assert.equal(deepLink.activeNavId, routeState.targetPageId);
+  assert.equal(deepLink.pathname, `${BASE_PATH}/page/${routeState.targetPageId}/`);
+  assert.equal(deepLink.stylesheetLoaded, true, '深链接下样式表应按基路径命中');
 
   if (routeState.categoryId) {
     await page.evaluate((targetPageId) => {
@@ -131,13 +159,27 @@ async function runRouteContract(page, baseUrl) {
     hash: routeState.categoryId || undefined,
   });
 
+  // 旧式 ?page= 链接（含未知 id）应迁移为路径式 URL 并回退首页
   await openPage(page, baseUrl, '/?page=__missing__');
   const normalized = await page.evaluate(() => ({
     activePageId: document.querySelector('.page.active')?.id || '',
     path: `${location.pathname}${location.search}${location.hash}`,
   }));
   assert.equal(normalized.activePageId, routeState.pageIds[0]);
-  assert.match(normalized.path, new RegExp(`[?&]page=${routeState.pageIds[0]}`));
+  assert.equal(
+    normalized.path,
+    `${BASE_PATH}/page/${routeState.pageIds[0]}/`,
+    '旧式链接应迁移为路径式 URL'
+  );
+
+  // 旧式 ?page=<已知页> 同样应迁移并命中该页
+  await openPage(page, baseUrl, `/?page=${routeState.targetPageId}`);
+  const legacyKnown = await page.evaluate(() => ({
+    activePageId: document.querySelector('.page.active')?.id || '',
+    path: `${location.pathname}${location.search}${location.hash}`,
+  }));
+  assert.equal(legacyKnown.activePageId, routeState.targetPageId);
+  assert.equal(legacyKnown.path, `${BASE_PATH}/page/${routeState.targetPageId}/`);
 
   const response404 = await page.request.get(`${baseUrl}/missing-path`);
   assert.equal(response404.status(), 404);
@@ -289,7 +331,7 @@ async function main() {
     port: 0,
     strictPort: true,
   });
-  const baseUrl = `http://127.0.0.1:${port}`;
+  const baseUrl = `http://127.0.0.1:${port}${BASE_PATH}`;
   let browser;
 
   try {

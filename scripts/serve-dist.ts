@@ -3,6 +3,7 @@ import http from 'node:http';
 import path from 'node:path';
 
 import { createLogger, isVerbose } from '../src/lib/logging/logger.ts';
+import { normalizeBasePath } from '../src/shared/base-path.ts';
 
 const log = createLogger('serve');
 
@@ -189,13 +190,34 @@ function sendFile(
 }
 
 function buildHandler(
-  rootDir: string
+  rootDir: string,
+  basePath = ''
 ): (req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse) => void {
   const normalizedRoot = path.resolve(rootDir);
+  const normalizedBase = normalizeBasePath(basePath);
 
   return (req, res) => {
     const rawUrl = req.url || '/';
-    const rawPath = rawUrl.split('?')[0] || '/';
+    let rawPath = rawUrl.split('?')[0] || '/';
+
+    // 子路径部署（MENAV_BASE_PATH=/repo）：剥掉基路径后按根目录映射，
+    // 与 GitHub Pages 项目站点的实际行为保持一致。
+    if (normalizedBase) {
+      if (rawPath === normalizedBase) {
+        const query = rawUrl.slice(rawPath.length);
+        res.statusCode = 302;
+        res.setHeader('Location', `${normalizedBase}/${query}`);
+        res.end();
+        return;
+      }
+
+      if (!rawPath.startsWith(`${normalizedBase}/`)) {
+        sendNotFound(res, normalizedRoot);
+        return;
+      }
+
+      rawPath = rawPath.slice(normalizedBase.length) || '/';
+    }
 
     const safePath = resolveStaticRequestPath(normalizedRoot, rawPath);
     if (!safePath.ok) {
@@ -259,7 +281,7 @@ async function startServer(options: ServerOptions): Promise<StartedServer> {
     throw new Error(`dist 目录不存在：${normalizedRoot}`);
   }
 
-  const handler = buildHandler(normalizedRoot);
+  const handler = buildHandler(normalizedRoot, normalizeBasePath(process.env.MENAV_BASE_PATH));
   const attempts = Math.max(1, parseInteger(maxPortAttempts, 1));
   const initialPort = parseInteger(port, 5173);
 

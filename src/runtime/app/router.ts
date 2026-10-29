@@ -11,7 +11,8 @@ const nested = require('./nested.ts') as {
   initializeNestedCategories: () => void;
   toggleCategories: () => void;
 };
-const { getRuntimeConfig } = require('../runtime-config.ts') as typeof import('../runtime-config');
+const { getBasePath, getRuntimeConfig } =
+  require('../runtime-config.ts') as typeof import('../runtime-config');
 const { buildRoutePath, parseRouteFromHref } =
   require('./router-url.ts') as typeof import('./router-url');
 const { SELECTORS, byId, qs, qsa } =
@@ -90,9 +91,11 @@ module.exports = function initRouting(
     const submenuItems = qsa(SELECTORS.submenuItem);
     state.pages = qsa(SELECTORS.page);
 
-    // 方案 A：用 ?page=<id> 作为页面深链接（兼容 GitHub Pages 静态托管）
+    // 路径式路由：/page/<pageId>/（可带部署基路径前缀）；兼容旧式 ?page=<pageId> 并自动迁移
     const normalizeText = (value: unknown): string =>
       String(value === null || value === undefined ? '' : value).trim();
+
+    const basePath = getBasePath();
 
     const pageRegistry: PageRegistryItem[] = (() => {
       try {
@@ -210,12 +213,13 @@ module.exports = function initRouting(
         pageRegistry,
         homePageId: state.homePageId,
         fallbackPageId: 'home',
+        basePath,
       });
 
     const setUrlState = (next: UrlStatePatch, options: UrlStateOptions = {}): void => {
       const { replace = true } = options;
       try {
-        const nextUrl = buildRoutePath(window.location.href, next);
+        const nextUrl = buildRoutePath(window.location.href, next, { basePath });
         const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
         if (nextUrl === currentUrl) return;
         const fn = replace ? history.replaceState : history.pushState;
@@ -342,12 +346,12 @@ module.exports = function initRouting(
       setActiveNavByPageId(pageId);
       showPage(pageId);
 
-      // 缺少 page 参数或输入不存在的 page id 时，统一规范化为推荐 URL：/?page=<id>
-      if (options.replaceInvalid && (!route.rawPageId || route.shouldReplaceUrl)) {
+      // 旧式 ?page= 链接、未知路径、未注册 page id 三种情况统一规范化为 /page/<pageId>/
+      if (options.replaceInvalid && route.shouldReplaceUrl) {
         setUrlState({ pageId, hash: route.hash || null }, { replace: true });
       }
 
-      // 深链接：支持 ?page=<id>#<categorySlug>
+      // 深链接：支持 /page/<pageId>/#<categorySlug>
       if (route.hash) {
         setTimeout(async () => {
           // 初始化已提前到 DOMContentLoaded，字体（含 FontAwesome @font-face）可能未就绪，
@@ -443,11 +447,11 @@ module.exports = function initRouting(
           const nextHash = normalizeText(categoryId) || normalizeText(categoryName);
           // 同页重复点击同一子菜单：当前 URL 已指向 (pageId, nextHash)。
           // 用与 setUrlState 内部一致的判据（buildRoutePath 结果 === 当前 URL 含 hash）识别并短路，
-          // 避免"先清空 hash 再重写 hash"重复 push 完全相同的 ?page=X#cat 条目（Back 需按 N 次）。
+          // 避免"先清空 hash 再重写 hash"重复 push 完全相同的 /page/X/#cat 条目（Back 需按 N 次）。
           const isRepeatedSameTarget =
             wasSamePage &&
             Boolean(nextHash) &&
-            buildRoutePath(window.location.href, { pageId, hash: nextHash }) ===
+            buildRoutePath(window.location.href, { pageId, hash: nextHash }, { basePath }) ===
               `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
           // 显示对应页面

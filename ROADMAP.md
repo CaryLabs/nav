@@ -15,7 +15,7 @@
 MeNav 当前基线已经明确：
 
 - MeNav 是一个以 `YAML + Markdown + Astro` 为核心的静态导航站生成器。
-- 单页模型继续保留：所有导航页面构建到同一个 `index.html`，运行时通过 `?page=<id>` 切换。
+- 多容器模型继续保留：每个导航页各产出一份 `dist/page/<id>/index.html`（内含全部 `.page` 容器），运行时通过路径式 `/page/<id>/` 切换；旧式 `?page=<id>` 自动迁移。
 - 配置已收敛为 `ResolvedConfig.pages` 和 `buildSiteModel()` 单一站点模型；页面必须由 `navigation.id` 声明，隐藏页使用 `hidden: true`。
 - 项目已完成 Astro 现代化迁移，并具备完整的 `lint / test / build / browser contract / audit` 校验链路。
 - 浏览器扩展只保留“书签导入入口”这一条链路，不再承担页面运行时 CRUD 或后台职责。

@@ -1,4 +1,6 @@
 ---
+import { assetUrl } from '../lib/urls.ts';
+
 interface Props {
   runtimeConfigJson?: string;
 }
@@ -13,5 +15,5 @@ const { runtimeConfigJson = '{}' } = Astro.props;
   style="display: none;"
   set:html={runtimeConfigJson}
 />
-<script is:inline src="./pinyin-match.js"></script>
-<script is:inline src="./script.js"></script>
+<script is:inline src={assetUrl('pinyin-match.js')}></script>
+<script is:inline src={assetUrl('script.js')}></script>

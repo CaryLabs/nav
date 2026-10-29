@@ -2,7 +2,7 @@
 
 ## 架构概述
 
-MeNav 现在使用 Astro 负责静态页面渲染，继续保留原有 YAML 配置与 vanilla JS 运行时。构建目标仍是单页导航站：`dist/index.html` 内包含所有 `.page` 容器，运行时通过 `?page=<id>` 切换页面。
+MeNav 现在使用 Astro 负责静态页面渲染，继续保留原有 YAML 配置与 vanilla JS 运行时。构建目标仍是导航站：每个导航页各自产出一份 `dist/page/<id>/index.html`，页面内包含所有 `.page` 容器，运行时通过路径式 URL `/page/<id>/` 切换页面（旧式 `?page=<id>` 自动迁移）。
 
 Astro 现代化迁移已完成；以下是重构后的核心边界：
 
@@ -55,7 +55,7 @@ npm run test:browser
 Astro 组件修改时必须保持以下契约稳定：
 
 - 页面仍为单页模型：所有导航页面在 `index.html` 中对应一个 `.page#<id>` 容器。
-- 运行时导航仍使用 `/?page=<id>` 和 `/?page=<id>#<categorySlug>`；未知路径不做旧式自动回跳。
+- 运行时导航使用路径式 `/<base>/page/<id>/` 和 `/<base>/page/<id>/#<categorySlug>`；`<base>` 由构建期环境变量 `MENAV_BASE_PATH` 注入（`<html data-base-path>`），旧式 `?page=<id>` 在首屏 `replaceState` 迁移，未知路径不做旧式自动回跳。
 - 页面中保留 `#menav-runtime-config` 运行时配置注入，数据来自 `SiteModel.runtimeConfigJson`。
 - 导航、分类、站点、社交链接保留关键 `data-*`：`data-type`、`data-id`、`data-name`、`data-url`、`data-icon`、`data-container` 等。
 - `pinyin-match.js` 继续作为全局脚本加载，搜索逻辑优先读取 `search-index.json`，并继续使用全局 `PinyinMatch`。搜索索引由 `buildSearchIndex(siteModel)` 从 `siteModel.searchSources` 生成。

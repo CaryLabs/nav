@@ -5,6 +5,7 @@ import RuntimeScripts from '../components/RuntimeScripts.astro';
 import SearchBar from '../components/SearchBar.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import ThemePreloadScript from '../components/ThemePreloadScript.astro';
+import { assetUrl, getBasePath } from '../lib/urls.ts';
 import type { NavigationItem, ResolvedConfig } from '../types/config';
 import type { PageEntry } from '../types/page';
 import type { RenderContext } from '../types/render';
@@ -34,15 +35,17 @@ const {
 } = Astro.props;
 
 const site = config.site || {};
+const basePath = getBasePath();
 const themeMode = site.theme?.mode || 'dark';
 const favicon = site.favicon || 'menav.svg';
+const faviconUrl = assetUrl(favicon);
 const fontAwesomeCssUrl =
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css';
 const fontAwesomePreload = `<link rel="preload" href="${fontAwesomeCssUrl}" as="style" onload="this.onload=null;this.rel='stylesheet'" />`;
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-theme-mode={themeMode} class="no-js">
+<html lang="zh-CN" data-theme-mode={themeMode} data-base-path={basePath} class="no-js">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -53,12 +56,12 @@ const fontAwesomePreload = `<link rel="preload" href="${fontAwesomeCssUrl}" as="
     <title data-editable="site-title">{site.title}</title>
     <meta name="description" content={site.description} data-editable="site-description" />
     <meta name="author" content={site.author} data-editable="site-author" />
-    <link rel="icon" href={`./${favicon}`} type="image/x-icon" />
-    <link rel="shortcut icon" href={`./${favicon}`} type="image/x-icon" />
+    <link rel="icon" href={faviconUrl} type="image/x-icon" />
+    <link rel="shortcut icon" href={faviconUrl} type="image/x-icon" />
     <Fragment set:html={fontLinks} />
     <style set:html={fontCss}></style>
     <ThemePreloadScript />
-    <link rel="stylesheet" href="./assets/style.css" />
+    <link rel="stylesheet" href={assetUrl('assets/style.css')} />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <Fragment set:html={fontAwesomePreload} />
     <noscript>
@@ -85,7 +88,7 @@ const fontAwesomePreload = `<link rel="preload" href="${fontAwesomeCssUrl}" as="
               site.favicon && (
                 <img
                   class="logo-image"
-                  src={`./${site.favicon}`}
+                  src={assetUrl(site.favicon)}
                   alt={`${site.title} logo`}
                   width="26"
                   height="26"

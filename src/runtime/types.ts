@@ -97,6 +97,8 @@ export type MenavConfigData = Record<string, unknown> & {
   navigation?: Array<{ id?: unknown }>;
   pageRegistry?: PageRegistryItem[];
   pageTemplates?: Record<string, unknown>;
+  /** 站点部署基路径（不含尾斜杠；根路径部署为空串） */
+  basePath?: unknown;
   site?: {
     security?: {
       allowedSchemes?: unknown;

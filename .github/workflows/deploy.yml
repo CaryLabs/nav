@@ -115,6 +115,10 @@ jobs:
         run: npm run sync
 
       - name: Build site (clean dist + generate)
+        env:
+          # 站点部署基路径：GitHub Pages 项目站点位于 /<repo>/ 子路径下。
+          # 若改为根域 / 自定义域部署，删除此项（默认即根路径）。
+          MENAV_BASE_PATH: /menav
         run: npm run build
 
       - name: Check favicon
