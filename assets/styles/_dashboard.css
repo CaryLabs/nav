@@ -434,3 +434,81 @@ html.light-theme .dashboard-panel {
     margin-top: 0.5rem;
   }
 }
+
+/* Responsive refinements for the global-tools navigation cards and Todo panel. */
+.dashboard-grid {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.global-tools-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: 0.75rem;
+}
+
+.global-tools-grid .site-card {
+  min-width: 0;
+}
+
+.dashboard-stats,
+.dashboard-intro {
+  min-width: 0;
+}
+
+.dashboard-panel {
+  width: 100%;
+  height: clamp(260px, 32vw, 360px);
+  min-width: 0;
+}
+
+.panel-sidebar {
+  flex: 0 0 4rem;
+}
+
+.panel-content-wrapper,
+.panel-content,
+.todo-item,
+.todo-text {
+  min-width: 0;
+}
+
+.todo-input-container {
+  flex-shrink: 0;
+}
+
+@media (min-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: stretch;
+  }
+
+  .dashboard-intro,
+  .dashboard-stats {
+    height: 100%;
+  }
+
+  .global-tools-card,
+  .dashboard-panel {
+    height: 100%;
+    min-height: clamp(300px, 32vw, 420px);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-stats {
+    display: block !important;
+  }
+
+  .dashboard-panel {
+    height: clamp(240px, 55vh, 360px);
+    min-height: 240px;
+  }
+
+  .panel-sidebar {
+    flex-basis: 3.25rem;
+  }
+
+  .panel-content {
+    padding: var(--spacing-md);
+  }
+}

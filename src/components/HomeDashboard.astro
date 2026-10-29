@@ -1,50 +1,58 @@
 ---
-const { page = {} } = Astro.props;
+
 ---
 
 <div class="dashboard-grid">
   <div class="dashboard-intro">
-    <div class="dashboard-welcome">
-      <h1 class="welcome-title">{page.title}</h1>
-      <p class="welcome-subtitle">{page.subtitle}</p>
-    </div>
-
-    <section class="dashboard-clock-card global-tools-card" aria-labelledby="global-tools-title">
-      <div class="clock-header">
-        <div class="clock-meta">
-          <h2 class="global-tools-title" id="global-tools-title">出海工具</h2>
-          <p class="global-tools-subtitle">拓展全球市场的常用入口</p>
-        </div>
-        <span class="global-tools-mark fas fa-arrow-up-right-from-square" aria-hidden="true"></span>
+    <section class="category global-tools-card" aria-labelledby="global-tools-title">
+      <div class="category-header">
+        <h2 id="global-tools-title"><i class="fas fa-star" aria-hidden="true"></i>出海工具</h2>
       </div>
-      <div class="global-tools-grid">
+      <div class="sites-grid global-tools-grid">
         <a
-          class="global-tool-link"
+          class="site-card"
           href="https://trends.google.com/trends/"
           target="_blank"
           rel="noopener noreferrer"
-          ><span class="fas fa-chart-line" aria-hidden="true"></span>Google趋势</a
         >
+          <div class="site-card-icon">
+            <i class="fas fa-chart-line site-icon" aria-hidden="true"></i>
+          </div>
+          <div class="site-card-content"><h3>Google趋势</h3><p>探索全球搜索趋势</p></div>
+        </a>
         <a
-          class="global-tool-link"
+          class="site-card"
           href="https://www.similarweb.com/"
           target="_blank"
           rel="noopener noreferrer"
-          ><span class="fas fa-globe" aria-hidden="true"></span>SimilarWeb</a
         >
+          <div class="site-card-icon">
+            <i class="fas fa-globe site-icon" aria-hidden="true"></i>
+          </div>
+          <div class="site-card-content"><h3>SimilarWeb</h3><p>网站流量与市场分析</p></div>
+        </a>
         <a
-          class="global-tool-link"
-          href="https://search.google.com/"
+          class="site-card"
+          href="https://trends.google.com/explore?geo=US"
           target="_blank"
           rel="noopener noreferrer"
-          ><span class="fas fa-magnifying-glass-chart" aria-hidden="true"></span>GSC</a
         >
+          <div class="site-card-icon">
+            <i class="fas fa-magnifying-glass-chart site-icon" aria-hidden="true"></i>
+          </div>
+          <div class="site-card-content"><h3>GSC</h3><p>Google 搜索表现管理</p></div>
+        </a>
         <a
-          class="global-tool-link"
+          class="site-card"
           href="https://developers.google.com/search/docs/fundamentals/get-started-developers?hl=zh-cn"
           target="_blank"
-          rel="noopener noreferrer"><span class="fas fa-book-open" aria-hidden="true"></span>SEO</a
+          rel="noopener noreferrer"
         >
+          <div class="site-card-icon">
+            <i class="fas fa-book-open site-icon" aria-hidden="true"></i>
+          </div>
+          <div class="site-card-content"><h3>SEO</h3><p>Google 搜索优化指南</p></div>
+        </a>
       </div>
     </section>
   </div>
