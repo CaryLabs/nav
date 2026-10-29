@@ -16,7 +16,7 @@
   "engines": {
     "node": ">=22.12"
   },
-  "homepage": "https://rbetree.github.io/menav",
+  "homepage": "https://carylabs.github.io/nav",
   "scripts": {
     "generate": "node -r ./scripts/register-ts.cjs ./scripts/generate.ts",
     "dev": "node -r ./scripts/register-ts.cjs ./scripts/dev.ts",

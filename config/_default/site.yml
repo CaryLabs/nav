@@ -4,7 +4,7 @@
 # 网站基本信息
 title: MeNav
 description: Personal Navigation Station
-author: rbetree
+author: CaryLabs
 favicon: menav.svg
 logo_text: MeNav
 
@@ -88,7 +88,7 @@ rss:
 # - username：你的 GitHub 用户名（例如 torvalds）
 # - heatmapColor：热力图主题色（不带 #，例如 339af0）
 github:
-  username: 'rbetree' # 你的 GitHub 用户名（例如 torvalds；为空则 projects 页不展示热力图）
+  username: 'carywh' # 你的 GitHub 用户名（例如 torvalds；为空则 projects 页不展示热力图）
   heatmapColor: 37b24d
   cacheDir: dev # projects 仓库元信息缓存目录（默认 dev，仓库默认 gitignore）
 

@@ -102,7 +102,7 @@ test('SSR：资源引用应走基路径而不是相对路径', () => {
 
 test('部署：GitHub Pages 构建应声明项目站点基路径', () => {
   const workflow = read('.github/workflows/deploy.yml');
-  assert.match(workflow, /MENAV_BASE_PATH:\s*\/menav/);
+  assert.match(workflow, /MENAV_BASE_PATH:\s*\/nav/);
 });
 
 test('构建：每个导航页都应产出独立的静态路由文件', () => {

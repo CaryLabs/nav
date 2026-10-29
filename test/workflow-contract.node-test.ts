@@ -59,7 +59,7 @@ test('ci workflow：默认使用快速 check，并按路径变更触发浏览器
     );
   }
 
-  assert.ok(ciWorkflow.includes("github.repository == 'rbetree/menav'"));
+  assert.ok(ciWorkflow.includes("github.repository == 'CaryLabs/nav'"));
   assert.ok(ciWorkflow.includes('npx playwright install --with-deps chromium'));
   assert.ok(ciWorkflow.includes('npm run check:browser'));
   assert.equal(ciWorkflow.includes('npm run lint'), false);

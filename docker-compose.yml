@@ -1,7 +1,7 @@
 services:
   menav:
     container_name: menav
-    image: ${MENAV_IMAGE:-ghcr.io/rbetree/menav:latest}
+    image: ${MENAV_IMAGE:-ghcr.io/carylabs/nav:latest}
     build:
       context: .
       args:

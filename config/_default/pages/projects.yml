@@ -19,7 +19,7 @@ categories:
       - name: MeNav
         icon: fab fa-github # 手动图标（manual 模式显示；favicon 模式下作为回退）
         description: 一键部署的个人导航站生成器，支持书签导入与自动构建，轻松整理展示您的网络收藏 # 站点描述
-        url: https://github.com/rbetree/menav
+        url: https://github.com/CaryLabs/nav
       - name: MarksVault
         icon: fab fa-github
         description: 一个强大的浏览器扩展，用于智能管理、整理和安全备份您的书签数据

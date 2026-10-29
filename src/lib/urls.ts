@@ -4,7 +4,7 @@ import { buildPagePath, normalizeBasePath, withBasePath } from '../shared/base-p
  * 构建期站点基路径来源：环境变量 MENAV_BASE_PATH。
  *
  * - 未设置：根路径部署（本地 dev、根域/自定义域），行为与历史版本一致。
- * - 设置（如 /menav）：GitHub Pages 项目站点子路径部署。
+ * - 设置（如 /nav）：GitHub Pages 项目站点子路径部署。
  */
 function getBasePath(): string {
   return normalizeBasePath(process.env.MENAV_BASE_PATH);

@@ -17,7 +17,7 @@ categories:
         icon: fab fa-linux # 手动图标：manual 模式使用；favicon 模式下作为回退
         description: 新的理想型社区 # 站点描述
       - name: Menav
-        url: https://rbetree.github.io/menav
+        url: https://carylabs.github.io/nav
         icon: fas fa-star
         description: 个人导航站
         faviconUrl: assets/menav.svg

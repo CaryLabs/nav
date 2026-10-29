@@ -61,9 +61,9 @@ jobs:
               - 'test/browser/**'
 
       - name: Install Playwright browsers
-        if: ${{ github.repository == 'rbetree/menav' && (steps.browser_paths.outputs.browser_contract == 'true' || (github.event_name == 'workflow_dispatch' && inputs.browser_contract)) }}
+        if: ${{ github.repository == 'CaryLabs/nav' && (steps.browser_paths.outputs.browser_contract == 'true' || (github.event_name == 'workflow_dispatch' && inputs.browser_contract)) }}
         run: npx playwright install --with-deps chromium
 
       - name: Browser contract
-        if: ${{ github.repository == 'rbetree/menav' && (steps.browser_paths.outputs.browser_contract == 'true' || (github.event_name == 'workflow_dispatch' && inputs.browser_contract)) }}
+        if: ${{ github.repository == 'CaryLabs/nav' && (steps.browser_paths.outputs.browser_contract == 'true' || (github.event_name == 'workflow_dispatch' && inputs.browser_contract)) }}
         run: npm run check:browser

@@ -7,8 +7,8 @@
 </div>
 
 [![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
-[![GitHub stars](https://img.shields.io/github/stars/rbetree/menav)](https://github.com/rbetree/menav/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/rbetree/menav)](https://github.com/rbetree/menav/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/CaryLabs/nav)](https://github.com/CaryLabs/nav/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/CaryLabs/nav)](https://github.com/CaryLabs/nav/network/members)
 
 📋 静态一键部署 | ⚡ 自动化构建 | 🔖 支持书签导入
 
@@ -20,7 +20,7 @@
 
 ## 预览
 
-[在线访问](https://rbetree.github.io/menav/)
+[在线访问](https://carylabs.github.io/nav/)
 
 <p align="center">
   <img src="assets/preview_light.png" alt="明亮主题预览" width="48%">
@@ -54,7 +54,7 @@
 ## 项目结构
 
 ```text
-menav/
+nav/
 ├── src/        # Astro 页面/组件、数据准备、书签处理、前端脚本
 ├── scripts/    # 构建、开发、同步、检查脚本
 ├── config/     # 模块化配置
@@ -85,8 +85,8 @@ menav/
 1. 克隆仓库
 
 ```bash
-git clone https://github.com/rbetree/menav.git
-cd menav
+git clone https://github.com/CaryLabs/nav.git
+cd nav
 ```
 
 2. 安装依赖
@@ -142,10 +142,10 @@ npm run dev
 
 页面深链接统一使用路径式 URL：`/page/<页面ID>/`，分类定位使用 `/page/<页面ID>/#<分类slug>`。构建期为每个导航页产出独立静态文件（`dist/page/<id>/index.html`），因此静态托管下直接访问也返回 200。旧式 `/?page=<页面ID>` 链接仍可打开，加载后会自动迁移为路径式 URL。
 
-部署在子路径（如 GitHub Pages 项目站点 `/menav/`）时，构建前设置基路径环境变量：
+部署在子路径（如 GitHub Pages 项目站点 `/nav/`）时，构建前设置基路径环境变量：
 
 ```bash
-MENAV_BASE_PATH=/menav npm run build
+MENAV_BASE_PATH=/nav npm run build
 ```
 
 未设置时按根路径部署处理；`npm run dev` 也遵循同一变量。
@@ -442,4 +442,4 @@ MeNav 支持从浏览器导出的 HTML 书签文件导入站点配置，快速�
 
 ## Star-History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=rbetree/menav&type=Date)](https://www.star-history.com/#rbetree/menav&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=CaryLabs/nav&type=Date)](https://www.star-history.com/#CaryLabs/nav&Date)

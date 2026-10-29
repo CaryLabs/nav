@@ -118,7 +118,7 @@ jobs:
         env:
           # 站点部署基路径：GitHub Pages 项目站点位于 /<repo>/ 子路径下。
           # 若改为根域 / 自定义域部署，删除此项（默认即根路径）。
-          MENAV_BASE_PATH: /menav
+          MENAV_BASE_PATH: /nav
         run: npm run build
 
       - name: Check favicon
@@ -135,10 +135,10 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Browser contract test (subpath /menav)
+      - name: Browser contract test (subpath /nav)
         env:
           # 与构建期一致的部署基路径，验证生产部署场景的路由契约
-          MENAV_BASE_PATH: /menav
+          MENAV_BASE_PATH: /nav
         run: npm run test:browser
 
       # GitHub Pages 部署步骤（仅在启用时执行）

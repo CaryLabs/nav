@@ -36,7 +36,7 @@ test('github/contributions：只保留贡献图白名单标签和安全属性（
     '</g>',
     '</svg>',
     '<a href="javascript:alert(1)">bad link</a>',
-    '<a href="https://github.com/rbetree">safe link</a>',
+    '<a href="https://github.com/CaryLabs">safe link</a>',
     '<img src=x onerror=evil()>',
     '</div>',
     '</div>',
@@ -49,7 +49,7 @@ test('github/contributions：只保留贡献图白名单标签和安全属性（
   assert.ok(inner.includes('class="js-calendar-graph"'));
   assert.ok(inner.includes('data-level="4"'));
   assert.ok(inner.includes('viewBox="0 0 20 20"'));
-  assert.ok(inner.includes('href="https://github.com/rbetree"'));
+  assert.ok(inner.includes('href="https://github.com/CaryLabs"'));
   assert.ok(!inner.includes('script'));
   assert.ok(!inner.includes('onclick'));
   assert.ok(!inner.includes('onload'));
