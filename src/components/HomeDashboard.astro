@@ -1,5 +1,90 @@
 ---
+interface GlobalTool {
+  /** 站点名称 */
+  name: string;
+  /** 一句话描述 */
+  desc: string;
+  /** 目标地址 */
+  href: string;
+  /** Font Awesome 6 免费版类名，如 'fas fa-globe' */
+  icon: string;
+}
 
+// 首页「出海工具」快捷入口：新增/调整站点只需维护此数组，渲染结构会自动生成。
+const globalTools: GlobalTool[] = [
+  {
+    name: 'Google Console',
+    desc: 'Google 搜索表现管理',
+    href: 'https://search.google.com/search-console',
+    icon: 'fas fa-magnifying-glass-chart',
+  },
+  {
+    name: 'Google Trends',
+    desc: '探索全球搜索趋势',
+    href: 'https://trends.google.com/explore?geo=US',
+    icon: 'fas fa-chart-line',
+  },
+  {
+    name: '哥伦布',
+    desc: '哥伦布热榜数据',
+    href: 'https://columbus.tools/ai-trends-rank',
+    icon: 'fas fa-fire',
+  },
+  {
+    name: 'easystarter',
+    desc: 'easystarter趋势',
+    href: 'https://www.easystarter.dev/zh/trends',
+    icon: 'fas fa-arrow-trend-up',
+  },
+  {
+    name: 'ahrefs',
+    desc: '外链与 SEO 数据分析',
+    href: 'https://ahrefs.com/',
+    icon: 'fas fa-chart-column',
+  },
+  {
+    name: 'Semrush',
+    desc: 'SEO 与竞品分析套件',
+    href: 'https://www.semrush.com/',
+    icon: 'fas fa-bullhorn',
+  },
+  {
+    name: 'huggingface',
+    desc: 'AI 模型与数据集社区',
+    href: 'https://huggingface.co/',
+    icon: 'fas fa-robot',
+  },
+  {
+    name: 'producthunt',
+    desc: '新产品发布与发现',
+    href: 'https://www.producthunt.com/',
+    icon: 'fas fa-rocket',
+  },
+  {
+    name: 'starterstory',
+    desc: '独立创业者案例库',
+    href: 'https://www.starterstory.com/',
+    icon: 'fas fa-seedling',
+  },
+  {
+    name: 'SEO BOX',
+    desc: 'SEO 工具箱',
+    href: 'https://seo.box/',
+    icon: 'fas fa-toolbox',
+  },
+  {
+    name: 'SimilarWeb',
+    desc: '网站流量与市场分析',
+    href: 'https://www.similarweb.com/',
+    icon: 'fas fa-globe',
+  },
+  {
+    name: 'SEO',
+    desc: 'Google 搜索优化指南',
+    href: 'https://developers.google.com/search/docs/fundamentals/get-started-developers?hl=zh-cn',
+    icon: 'fas fa-book-open',
+  },
+];
 ---
 
 <div class="dashboard-grid">
@@ -9,50 +94,19 @@
         <h2 id="global-tools-title"><i class="fas fa-star" aria-hidden="true"></i>出海工具</h2>
       </div>
       <div class="sites-grid global-tools-grid">
-        <a
-          class="site-card"
-          href="https://trends.google.com/trends/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="site-card-icon">
-            <i class="fas fa-chart-line site-icon" aria-hidden="true"></i>
-          </div>
-          <div class="site-card-content"><h3>Google趋势</h3><p>探索全球搜索趋势</p></div>
-        </a>
-        <a
-          class="site-card"
-          href="https://www.similarweb.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="site-card-icon">
-            <i class="fas fa-globe site-icon" aria-hidden="true"></i>
-          </div>
-          <div class="site-card-content"><h3>SimilarWeb</h3><p>网站流量与市场分析</p></div>
-        </a>
-        <a
-          class="site-card"
-          href="https://trends.google.com/explore?geo=US"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="site-card-icon">
-            <i class="fas fa-magnifying-glass-chart site-icon" aria-hidden="true"></i>
-          </div>
-          <div class="site-card-content"><h3>GSC</h3><p>Google 搜索表现管理</p></div>
-        </a>
-        <a
-          class="site-card"
-          href="https://developers.google.com/search/docs/fundamentals/get-started-developers?hl=zh-cn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="site-card-icon">
-            <i class="fas fa-book-open site-icon" aria-hidden="true"></i>
-          </div>
-          <div class="site-card-content"><h3>SEO</h3><p>Google 搜索优化指南</p></div>
-        </a>
+        {
+          globalTools.map((tool) => (
+            <a class="site-card" href={tool.href} target="_blank" rel="noopener noreferrer">
+              <div class="site-card-icon">
+                <i class:list={[tool.icon, 'site-icon']} aria-hidden="true" />
+              </div>
+              <div class="site-card-content">
+                <h3>{tool.name}</h3>
+                <p>{tool.desc}</p>
+              </div>
+            </a>
+          ))
+        }
       </div>
     </section>
   </div>

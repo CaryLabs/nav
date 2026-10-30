@@ -446,8 +446,32 @@ html.light-theme .dashboard-panel {
   gap: 0.75rem;
 }
 
+/* 出海工具快捷入口：网格卡片较窄（约 200px），图标与字号统一收一档，避免拥挤 */
 .global-tools-grid .site-card {
   min-width: 0;
+  padding: 0.5rem 0.6rem;
+  gap: 0.5rem;
+}
+
+.global-tools-grid .site-card .site-card-icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: var(--radius-sm);
+}
+
+.global-tools-grid .site-card .site-icon {
+  font-size: 0.9rem;
+}
+
+.global-tools-grid .site-card h3 {
+  font-size: 0.82rem;
+  margin-bottom: 0.1rem;
+  letter-spacing: 0;
+}
+
+.global-tools-grid .site-card p {
+  font-size: 0.72rem;
+  line-height: 1.3;
 }
 
 .dashboard-stats,
