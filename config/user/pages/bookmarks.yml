@@ -1,0 +1,62 @@
+# 自动生成的书签配置文件
+# 若要更新，请将新的书签HTML文件放入bookmarks/目录
+# 此文件使用模块化配置格式，位于config/user/pages/目录下
+
+title: 我的书签
+subtitle: 从浏览器导入的书签收藏
+template: bookmarks
+categories:
+  - name: 根目录书签
+    icon: fas fa-star
+    path:
+      - 根目录书签
+    sites:
+      - name: Astro 官方文档
+        url: https://astro.build/
+        icon: fas fa-link
+        description: ''
+      - name: GitHub
+        url: https://github.com/
+        icon: fab fa-github
+        description: ''
+  - name: 开发工具
+    icon: fas fa-folder
+    path:
+      - 开发工具
+    subcategories:
+      - name: 构建链
+        icon: fas fa-folder
+        path:
+          - 开发工具
+          - 构建链
+        sites:
+          - name: Vite
+            url: https://vite.dev/
+            icon: fas fa-link
+            description: ''
+          - name: esbuild
+            url: https://esbuild.github.io/
+            icon: fab fa-github
+            description: ''
+    sites:
+      - name: VS Code
+        url: https://code.visualstudio.com/
+        icon: fas fa-link
+        description: ''
+      - name: TypeScript 手册
+        url: https://www.typescriptlang.org/
+        icon: fas fa-link
+        description: ''
+  - name: 常用服务
+    icon: fas fa-folder
+    path:
+      - 常用服务
+    sites:
+      - name: nav 仓库
+        url: https://github.com/CaryLabs/nav
+        icon: fab fa-github
+        description: ''
+      - name: GitHub Pages
+        url: https://pages.github.com/
+        icon: fab fa-github
+        description: ''
