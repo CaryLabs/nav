@@ -53,8 +53,36 @@ async function waitForRouteState(page, expected) {
   );
 }
 
+const LOCAL_HOSTNAMES = new Set(['127.0.0.1', 'localhost']);
+
+/**
+ * 第三方资源（字体 CDN、图标 CDN、favicon 服务）在 CI 网络下的加载失败不应阻塞契约：
+ * 线上可用性由真实浏览器环境保证，这里只约束站点自身资源不得报错。
+ */
+function isThirdPartyResourceError(message) {
+  if (!/Failed to load resource/i.test(String(message.text))) return false;
+  try {
+    const { hostname } = new URL(message.url);
+    return !LOCAL_HOSTNAMES.has(hostname);
+  } catch {
+    return false;
+  }
+}
+
 async function assertNoConsoleErrors(messages) {
-  const errors = messages.filter((message) => message.type === 'error');
+  const ignored = messages.filter(
+    (message) => message.type === 'error' && isThirdPartyResourceError(message)
+  );
+  if (ignored.length > 0) {
+    log.warn('忽略第三方资源加载失败（不影响站点自身契约）', {
+      count: ignored.length,
+      samples: ignored.slice(0, 3).map((message) => message.url),
+    });
+  }
+
+  const errors = messages.filter(
+    (message) => message.type === 'error' && !isThirdPartyResourceError(message)
+  );
   assert.deepEqual(errors, [], `浏览器控制台不应输出 error：${JSON.stringify(errors)}`);
 }
 
@@ -338,7 +366,11 @@ async function main() {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
     page.on('console', (message) => {
-      messages.push({ type: message.type(), text: message.text() });
+      messages.push({
+        type: message.type(),
+        text: message.text(),
+        url: message.location()?.url || '',
+      });
     });
     page.on('pageerror', (error) => {
       messages.push({ type: 'error', text: error.message });
