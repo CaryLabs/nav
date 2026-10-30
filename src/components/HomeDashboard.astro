@@ -1,4 +1,16 @@
 ---
+import CardIcon from './CardIcon.astro';
+import type { PageData } from '../types/page';
+import type { RenderContext } from '../types/render';
+import { DEFAULT_RENDER_CONTEXT } from '../lib/view-data/render-context.ts';
+
+interface Props {
+  page?: PageData;
+  renderContext?: RenderContext;
+}
+
+const { renderContext = DEFAULT_RENDER_CONTEXT } = Astro.props;
+
 interface GlobalTool {
   /** 站点名称 */
   name: string;
@@ -97,9 +109,12 @@ const globalTools: GlobalTool[] = [
         {
           globalTools.map((tool) => (
             <a class="site-card" href={tool.href} target="_blank" rel="noopener noreferrer">
-              <div class="site-card-icon">
-                <i class:list={[tool.icon, 'site-icon']} aria-hidden="true" />
-              </div>
+              <CardIcon
+                renderContext={renderContext}
+                name={tool.name}
+                url={tool.href}
+                icon={tool.icon}
+              />
               <div class="site-card-content">
                 <h3>{tool.name}</h3>
                 <p>{tool.desc}</p>
