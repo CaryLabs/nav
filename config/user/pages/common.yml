@@ -14,15 +14,15 @@ categories:
     sites:
       - name: TrustMRR # 站点名称
         url: https://trustmrr.com/ # http/https URL（favicon 模式将尝试加载站点图标）
-        icon: fab fa-trustmrr # 手动图标：manual 模式使用；favicon 模式下作为回退
+        icon: fas fa-money-bill-trend-up # 手动图标：manual 模式使用；favicon 模式下作为回退
         description: The database of verified startup revenues # 站点描述
       - name: keyword-generator # 站点名称
         url: https://ahrefs.com/keyword-generator/ # http/https URL（favicon 模式将尝试加载站点图标）
-        icon: fab fa-generator # 手动图标：manual 模式使用；favicon 模式下作为回退
+        icon: fas fa-key # 手动图标：manual 模式使用；favicon 模式下作为回退
         description: 关键词生成 # 站点描述
       - name: Web.Cafe # 站点名称
         url: https://new.web.cafe/ # http/https URL（favicon 模式将尝试加载站点图标）
-        icon: fab fa-web # 手动图标：manual 模式使用；favicon 模式下作为回退
+        icon: fas fa-mug-hot # 手动图标：manual 模式使用；favicon 模式下作为回退
         description: SEO工具站 # 站点描述
       - name: Linux.do # 站点名称
         url: https://linux.do/ # http/https URL（favicon 模式将尝试加载站点图标）
@@ -93,7 +93,7 @@ categories:
         description: 图标资源库
       - name: Adobe XD
         url: https://www.adobe.com/products/xd.html
-        icon: fab fa-adobe
+        icon: fas fa-pen-nib
         description: UI/UX设计工具
       - name: Sketch
         url: https://www.sketch.com
@@ -112,7 +112,7 @@ categories:
         description: JSON在线编辑器
       - name: Can I Use
         url: https://caniuse.com
-        icon: fas fa-browser
+        icon: fas fa-window-restore
         description: 浏览器兼容性查询
       - name: TinyPNG
         url: https://tinypng.com

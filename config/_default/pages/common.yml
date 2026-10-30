@@ -81,7 +81,7 @@ categories:
         description: 图标资源库
       - name: Adobe XD
         url: https://www.adobe.com/products/xd.html
-        icon: fab fa-adobe
+        icon: fas fa-pen-nib
         description: UI/UX设计工具
       - name: Sketch
         url: https://www.sketch.com
@@ -100,7 +100,7 @@ categories:
         description: JSON在线编辑器
       - name: Can I Use
         url: https://caniuse.com
-        icon: fas fa-browser
+        icon: fas fa-window-restore
         description: 浏览器兼容性查询
       - name: TinyPNG
         url: https://tinypng.com
