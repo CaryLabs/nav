@@ -51,15 +51,15 @@
   "author": "Your Name",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "js-yaml": "^4.3.1",
-    "markdown-it": "^14.2.0",
+    "js-yaml": "^4.3.2",
+    "markdown-it": "^14.3.3",
     "rss-parser": "^3.13.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@types/node": "^26.0.0",
-    "astro": "^7.1.6",
+    "astro": "7.4.1",
     "esbuild": "^0.28.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
@@ -70,13 +70,14 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "brace-expansion": "1.1.18",
+    "brace-expansion": "1.1.21",
+    "compression": "1.8.2",
     "esbuild": "$esbuild",
-    "fast-uri": "3.1.5",
+    "fast-uri": "3.1.9",
     "linkify-it": "5.0.2",
     "nanoid": "3.3.18",
-    "sharp": "0.35.0",
-    "svgo": "4.0.2"
+    "sharp": "0.35.5",
+    "svgo": "4.1.0"
   },
   "lint-staged": {
     "**/*.js": "node ./node_modules/prettier/bin/prettier.cjs --write --ignore-unknown",

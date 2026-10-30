@@ -49,7 +49,7 @@
 - YAML 模块化配置
 - Google Favicon API + Font Awesome 图标
 
-运行环境要求：Node.js `22.12+`，包管理器继续使用 npm。
+运行环境要求：Node.js `22.22+`，包管理器继续使用 npm。
 
 ## 项目结构
 
@@ -96,7 +96,7 @@ nvm use
 npm install
 ```
 
-请确保本机 Node.js 版本为 `22.12+`；仓库提供 `.nvmrc` 固定主版本为
+请确保本机 Node.js 版本为 `22.22+`；仓库提供 `.nvmrc` 固定主版本为
 `22`，使用 nvm 时先运行 `nvm use`。Windows 和 WSL/Linux 环境不要共用
 `node_modules`，请在各自环境中分别安装依赖。
 
