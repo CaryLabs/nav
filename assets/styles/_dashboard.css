@@ -463,6 +463,18 @@ html.light-theme .dashboard-panel {
   font-size: 0.9rem;
 }
 
+/* favicon 模式：图标容器与外层 1.8rem 框按其他卡片同样的留白比例收窄 */
+.global-tools-grid .site-card .icon-container {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.global-tools-grid .site-card .icon-fallback,
+.global-tools-grid .site-card .icon-placeholder {
+  font-size: 0.9rem;
+  line-height: 1.15rem;
+}
+
 .global-tools-grid .site-card h3 {
   font-size: 0.82rem;
   margin-bottom: 0.1rem;

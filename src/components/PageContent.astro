@@ -135,7 +135,11 @@ const articleCards = articlesCategories.flatMap((category) => category.cards || 
     </div>
   ) : (
     <div class:list={['page-template', `page-template-${page.pageId}`]}>
-      {page.isHome ? <HomeDashboard page={page} /> : <PageHeader page={page} />}
+      {page.isHome ? (
+        <HomeDashboard page={page} renderContext={renderContext} />
+      ) : (
+        <PageHeader page={page} />
+      )}
       {categories.map((category) => (
         <Category category={category} renderContext={renderContext} />
       ))}
