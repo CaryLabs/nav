@@ -51,6 +51,14 @@ const SELECTORS = {
   siteDescription: 'p',
   repoDescription: '.repo-desc',
   dataTooltip: '[data-tooltip]',
+  todoList: 'todo-list',
+  todoInputContainer: 'todo-input-container',
+  todoInputField: 'todo-input-field',
+  todoAddButton: '.todo-add-btn-small',
+  todoToggleInputButton: '[data-todo-toggle-input]',
+  todoItem: '[data-todo-id]',
+  todoCheckbox: '.todo-checkbox',
+  todoDeleteButton: '[data-action="delete"]',
 } as const;
 
 function qs<T extends HTMLElement = HTMLElement>(

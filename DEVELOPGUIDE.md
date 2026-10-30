@@ -61,10 +61,11 @@
 
 ## 3. 首页「待办」面板
 
-待办数据存在浏览器 `localStorage` 的 `menav_todos_v1`，属于用户本机数据，**不随仓库发布**，没有配置文件。
+待办数据存在浏览器 `localStorage` 的 `menav_todos_v2`，结构为 `{ version: 2, items: [{ id, text, done }] }`，属于用户本机数据，**不随仓库发布**，没有配置文件。首次读取旧 `menav_todos_v1` 数据时会自动迁移到 v2；v1 保留为迁移时快照，仅在 v2 缺失或损坏时用于恢复，不随后续修改更新。
 
-- 想改默认初始待办（首次访问、无本地数据时显示的内容）：`HomeDashboard.astro` 的 `load()` 里有两项 `Drink Water` / `Explore MeNav`
-- 想清空自己的：浏览器控制台 `localStorage.removeItem('menav_todos_v1')`
+- 想改默认初始待办（首次访问、无本地数据时显示的内容）：`src/runtime/app/todo.ts` 的 `DEFAULT_TODOS`
+- 想清空自己的：浏览器控制台执行 `localStorage.removeItem('menav_todos_v2'); localStorage.removeItem('menav_todos_v1')`
+- 跨标签页修改会自动同步；存储不可用时仅当前页面会话内有效
 
 ---
 
