@@ -11,13 +11,15 @@ on:
 # 设置GITHUB_TOKEN的权限
 permissions:
   contents: write
+  pull-requests: write
+  actions: write
   pages: write
   id-token: write
 
 # 允许一个并发部署
 concurrency:
   # 说明：
-  # - 本工作流在检测到 bookmarks/*.html 时会自动导入并 push 回主分支
+  # - 本工作流在检测到 bookmarks/*.html 时会自动导入，并推到 automation/bookmarks-sync 分支开 PR（main 受分支保护）
   # - 若 concurrency group 统一为固定值，会导致“自触发的 push run”取消当前正在部署的 run（cancel-in-progress）
   # - 这里仅对 actions bot 的 push run 单独分组，避免误取消当前 run；其余触发保持全局串行
   group: ${{ github.event_name == 'push' && github.actor == 'github-actions[bot]' && 'pages-bot-push' || 'pages' }}
@@ -65,10 +67,12 @@ jobs:
           echo "Processing bookmark files..."
           npm run import-bookmarks
 
-      - name: Commit & push bookmark import result (single commit)
+      - name: Publish bookmark import via pull request
         if: steps.check_bookmark_files.outputs.found == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_BRANCH: automation/bookmarks-sync
         run: |
           set -euo pipefail
 
@@ -104,7 +108,67 @@ jobs:
           fi
 
           git commit -m "chore(bookmarks): 导入书签并写回用户配置"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:${{ github.ref_name }}
+
+          # main 已启用分支保护（必需检查 build_test、禁止直接推送），GITHUB_TOKEN 直推会被 GH006 拒绝。
+          # 因此改为推到固定同步分支，再以 PR 形式合入 main。
+          git checkout -B "${SYNC_BRANCH}"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" \
+            "${SYNC_BRANCH}"
+
+          # --- 以下仅 PR 发布环节：失败只告警，不阻断后续站点构建与部署 ---
+          # 本次 run 的构建使用当前工作区（已含导入结果），所以 PR 环节失败不影响本次部署内容；
+          # 上方的导入结果校验与 git push 仍在函数外，失败照旧中断部署。
+          publish_pr() {
+            local pr_url merge_err
+            pr_url=$(gh pr list \
+              --repo "${{ github.repository }}" \
+              --head "${SYNC_BRANCH}" \
+              --base main \
+              --state open \
+              --json url \
+              --jq '.[0].url // ""') || return 1
+
+            if [ -z "${pr_url}" ]; then
+              local body="由 Build and Deploy Site 工作流自动创建。main 已启用分支保护（必需检查 build_test、禁止直接推送），书签导入结果不再直接 push，改为经 PR 合入；合并后本次导入的配置才会持久化到 main。"
+              pr_url=$(gh pr create \
+                --repo "${{ github.repository }}" \
+                --base main \
+                --head "${SYNC_BRANCH}" \
+                --title "chore(bookmarks): 导入书签并写回用户配置" \
+                --body "${body}") || return 1
+              echo "Created PR: ${pr_url}"
+            else
+              echo "Reusing open PR: ${pr_url}"
+            fi
+
+            # 用 GITHUB_TOKEN 发起的 push / PR 不会触发新的 workflow run（GitHub 防递归），
+            # ci.yml 的 pull_request 事件因此被抑制，必需检查 build_test 不会自动上报。
+            # 这里显式 dispatch ci.yml（workflow_dispatch 不受该抑制影响），让 PR 能拿到必需检查。
+            gh workflow run ci.yml \
+              --repo "${{ github.repository }}" \
+              --ref "${SYNC_BRANCH}" \
+              || echo "::warning title=无法触发 CI::gh workflow run 失败，请手动在 PR 上触发检查后再合并"
+
+            # 仓库开启 auto-merge 时，PR 会在 build_test 通过后自动合并；未开启则留给人工合并。
+            if merge_err=$(gh pr merge "${pr_url}" --squash --auto 2>&1); then
+              echo "Auto-merge enabled: ${pr_url}"
+            else
+              echo "::warning title=书签导入待合并::auto-merge 未启用或暂不可合并：${merge_err}"
+              {
+                echo "### 书签导入写回待人工合并"
+                echo ""
+                echo "PR：${pr_url}"
+                echo ""
+                echo '```'
+                gh pr view "${pr_url}" --repo "${{ github.repository }}" \
+                  --json mergeStateStatus,mergeable,statusCheckRollup \
+                  --jq '{mergeStateStatus,mergeable,checks:[.statusCheckRollup[]?|{name,status,conclusion}]}' 2>&1 || true
+                echo '```'
+              } >> "${GITHUB_STEP_SUMMARY}"
+            fi
+          }
+
+          publish_pr || echo "::warning title=书签导入写回未完成::PR 发布失败，站点仍会以本次导入结果构建；请查看日志后手动补 PR"
       # --- 书签处理步骤结束 ---
       # --- 网站构建和部署步骤 ---
       # 同步时效性数据（best-effort）：projects 仓库信息、articles RSS 聚合
