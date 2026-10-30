@@ -12,6 +12,18 @@ categories:
   - name: 置顶
     icon: fas fa-star # 分类图标
     sites:
+      - name: TrustMRR # 站点名称
+        url: https://trustmrr.com/ # http/https URL（favicon 模式将尝试加载站点图标）
+        icon: fab fa-trustmrr # 手动图标：manual 模式使用；favicon 模式下作为回退
+        description: The database of verified startup revenues # 站点描述
+      - name: keyword-generator # 站点名称
+        url: https://ahrefs.com/keyword-generator/ # http/https URL（favicon 模式将尝试加载站点图标）
+        icon: fab fa-generator # 手动图标：manual 模式使用；favicon 模式下作为回退
+        description: 关键词生成 # 站点描述
+      - name: Web.Cafe # 站点名称
+        url: https://new.web.cafe/ # http/https URL（favicon 模式将尝试加载站点图标）
+        icon: fab fa-web # 手动图标：manual 模式使用；favicon 模式下作为回退
+        description: SEO工具站 # 站点描述
       - name: Linux.do # 站点名称
         url: https://linux.do/ # http/https URL（favicon 模式将尝试加载站点图标）
         icon: fab fa-linux # 手动图标：manual 模式使用；favicon 模式下作为回退
