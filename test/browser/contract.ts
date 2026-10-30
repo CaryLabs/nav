@@ -20,6 +20,8 @@ async function waitForMenav(page) {
 async function openPage(page, baseUrl, pathAndQuery = '/') {
   await page.goto(`${baseUrl}${pathAndQuery}`, { waitUntil: 'domcontentloaded' });
   await waitForMenav(page);
+  // 给 idle 阶段发起的 search-index 请求一个落点，避免测试立即导航时把同源请求中止成控制台错误。
+  await page.waitForTimeout(250);
 }
 
 function parseRgba(input) {
@@ -349,6 +351,210 @@ async function runDomThemeSearchContract(page, baseUrl) {
   assert.equal(resetState.activePageId, resetState.activeNavId);
 }
 
+async function runTodoContract(page, baseUrl, messages) {
+  await openPage(page, baseUrl, '/');
+  await page.evaluate(() => {
+    localStorage.removeItem('menav_todos_v2');
+    localStorage.setItem(
+      'menav_todos_v1',
+      JSON.stringify([
+        { text: '迁移任务 A', done: false },
+        { text: '迁移任务 B', done: true },
+      ])
+    );
+  });
+
+  await openPage(page, baseUrl, '/');
+  await page.waitForFunction(() => document.querySelectorAll('.todo-item').length === 2);
+
+  const state = await page.evaluate(() => {
+    const panel = document.querySelector('.dashboard-panel');
+    const reference = document.querySelector('.global-tools-card');
+    const title = document.querySelector('#todo-panel-title');
+
+    function cardStyles(element) {
+      const computed = getComputedStyle(element);
+      return {
+        border: `${computed.borderTopWidth} ${computed.borderTopColor}`,
+        borderRadius: computed.borderRadius,
+        boxShadow: computed.boxShadow,
+        backgroundImage: computed.backgroundImage,
+      };
+    }
+
+    return {
+      title: title?.textContent?.trim() || '',
+      hasIcon: Boolean(title?.querySelector('i.fa-list-check')),
+      panel: cardStyles(panel),
+      reference: cardStyles(reference),
+      items: Array.from(document.querySelectorAll('.todo-text')).map(
+        (node) => node.textContent || ''
+      ),
+      v1: JSON.parse(localStorage.getItem('menav_todos_v1') || 'null'),
+      v2: JSON.parse(localStorage.getItem('menav_todos_v2') || 'null'),
+    };
+  });
+
+  assert.equal(state.title, '待办事项');
+  assert.equal(state.hasIcon, true, 'Todo 标题应显示图标');
+  assert.deepEqual(state.panel, state.reference, 'Todo 卡片应与左侧栏位保持相同卡面样式');
+  assert.deepEqual(state.items, ['迁移任务 A', '迁移任务 B']);
+  assert.equal(state.v1.length, 2, '迁移后应保留 v1 键');
+  assert.equal(state.v2.version, 2);
+  assert.equal(state.v2.items.length, 2);
+
+  await page.locator('.todo-item').first().locator('.todo-checkbox').click();
+  await page.waitForFunction(
+    () => document.querySelector('.todo-checkbox')?.getAttribute('aria-checked') === 'true'
+  );
+
+  const afterToggle = await page.evaluate(() => {
+    const v2 = JSON.parse(localStorage.getItem('menav_todos_v2') || 'null');
+    const active = document.activeElement;
+    return {
+      firstDone: v2?.items?.[0]?.done,
+      activeRole: active?.getAttribute('role') || '',
+      activeChecked: active?.getAttribute('aria-checked') || '',
+    };
+  });
+  assert.equal(afterToggle.firstDone, true, '勾选后应写入 v2');
+  assert.equal(afterToggle.activeRole, 'checkbox', '勾选后键盘焦点应停留在原条目');
+  assert.equal(afterToggle.activeChecked, 'true');
+
+  const peer = await page.context().newPage();
+  peer.on('console', (message) => {
+    messages.push({
+      type: message.type(),
+      text: message.text(),
+      url: message.location()?.url || '',
+    });
+  });
+  peer.on('pageerror', (error) => {
+    messages.push({ type: 'error', text: error.message });
+  });
+  await openPage(peer, baseUrl, '/');
+  await peer.waitForFunction(() => document.querySelectorAll('.todo-item').length === 2);
+
+  await page.evaluate(() => {
+    document.querySelector('[data-todo-toggle-input]')?.click();
+    const input = document.querySelector('#todo-input-field');
+    input.value = '跨标签新增';
+    document.querySelector('.todo-add-btn-small')?.click();
+  });
+  await peer.waitForFunction(
+    () =>
+      Array.from(document.querySelectorAll('.todo-text')).some(
+        (node) => node.textContent === '跨标签新增'
+      ),
+    null,
+    { timeout: 5000 }
+  );
+
+  await peer.locator('.todo-item', { hasText: '迁移任务 B' }).locator('.todo-checkbox').click();
+  await page.waitForFunction(
+    () => {
+      const item = Array.from(document.querySelectorAll('.todo-item')).find(
+        (node) => node.querySelector('.todo-text')?.textContent === '迁移任务 B'
+      );
+      return item?.querySelector('.todo-checkbox')?.getAttribute('aria-checked') === 'false';
+    },
+    null,
+    { timeout: 5000 }
+  );
+
+  const merged = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('menav_todos_v2') || 'null')
+  );
+  assert.equal(merged.items.length, 3, '跨标签新增和勾选后应保留全部变更');
+  await peer.close();
+
+  const failurePage = await page.context().newPage();
+  failurePage.on('console', (message) => {
+    messages.push({
+      type: message.type(),
+      text: message.text(),
+      url: message.location()?.url || '',
+    });
+  });
+  failurePage.on('pageerror', (error) => {
+    messages.push({ type: 'error', text: error.message });
+  });
+  await failurePage.addInitScript(() => {
+    const originalSetItem = Storage.prototype.setItem;
+    let blocked = true;
+    Storage.prototype.setItem = function (key, value) {
+      if (blocked && key === 'menav_todos_v2') {
+        throw new DOMException('quota exceeded', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+    window.__allowTodoWrites = () => {
+      blocked = false;
+    };
+  });
+  await openPage(failurePage, baseUrl, '/');
+  await failurePage.waitForFunction(() => document.querySelectorAll('.todo-item').length === 3);
+
+  await failurePage
+    .locator('.todo-item', { hasText: '迁移任务 B' })
+    .locator('.todo-checkbox')
+    .click();
+  await failurePage
+    .locator('.todo-item', { hasText: '跨标签新增' })
+    .locator('.todo-checkbox')
+    .click();
+
+  const degraded = await failurePage.evaluate(() => {
+    const checked = (text) =>
+      Array.from(document.querySelectorAll('.todo-item'))
+        .find((node) => node.querySelector('.todo-text')?.textContent === text)
+        ?.querySelector('.todo-checkbox')
+        ?.getAttribute('aria-checked');
+    return {
+      b: checked('迁移任务 B'),
+      added: checked('跨标签新增'),
+      stored: JSON.parse(localStorage.getItem('menav_todos_v2') || 'null'),
+    };
+  });
+  assert.equal(degraded.b, 'true', '写失败后应保留第一次会话内变更');
+  assert.equal(degraded.added, 'true', '写失败后应保留第二次会话内变更');
+  assert.equal(
+    degraded.stored.items.find((item) => item.text === '迁移任务 B').done,
+    false,
+    '写失败期间存储不应被更新'
+  );
+
+  await failurePage.evaluate(() => {
+    window.__allowTodoWrites();
+    document.querySelector('[data-todo-toggle-input]')?.click();
+    const input = document.querySelector('#todo-input-field');
+    input.value = '恢复写入';
+    document.querySelector('.todo-add-btn-small')?.click();
+  });
+
+  const recovered = await failurePage.evaluate(() =>
+    JSON.parse(localStorage.getItem('menav_todos_v2') || 'null')
+  );
+  assert.equal(recovered.items.length, 4, '写入恢复后应一次落盘全部会话内变更');
+  assert.equal(recovered.items.find((item) => item.text === '迁移任务 B').done, true);
+  assert.equal(recovered.items.find((item) => item.text === '跨标签新增').done, true);
+  await failurePage.close();
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  const mobile = await page.evaluate(() => {
+    const header = document.querySelector('.panel-header h2');
+    const item = document.querySelector('.todo-item');
+    const panel = document.querySelector('.dashboard-panel');
+    return {
+      headerLeft: header?.getBoundingClientRect().left || 0,
+      itemLeft: item?.getBoundingClientRect().left || 0,
+      overflow: panel ? panel.scrollWidth - panel.clientWidth : 0,
+    };
+  });
+  assert.ok(Math.abs(mobile.headerLeft - mobile.itemLeft) <= 1, '移动端标题与条目应左对齐');
+  assert.ok(mobile.overflow <= 1, `移动端 Todo 面板不应横向溢出：${mobile.overflow}`);
+}
+
 async function main() {
   const elapsedMs = startTimer();
   const repoRoot = path.resolve(__dirname, '..', '..');
@@ -364,7 +570,8 @@ async function main() {
 
   try {
     browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
     page.on('console', (message) => {
       messages.push({
         type: message.type(),
@@ -375,10 +582,10 @@ async function main() {
     page.on('pageerror', (error) => {
       messages.push({ type: 'error', text: error.message });
     });
-
     await runRouteContract(page, baseUrl);
     await runRuntimeConfigContract(page, baseUrl);
     await runDomThemeSearchContract(page, baseUrl);
+    await runTodoContract(page, baseUrl, messages);
     await assertNoConsoleErrors(messages);
 
     log.ok('完成', { ms: elapsedMs(), url: baseUrl });

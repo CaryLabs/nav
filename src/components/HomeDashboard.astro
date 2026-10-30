@@ -127,21 +127,27 @@ const globalTools: GlobalTool[] = [
   </div>
 
   <div class="dashboard-stats">
-    <div class="dashboard-panel">
+    <section class="dashboard-panel" aria-labelledby="todo-panel-title">
       <div class="panel-sidebar">
-        <div class="panel-static-icon">
-          <span class="fas fa-bars"></span>
-        </div>
         <button
           class="panel-icon-btn add-btn"
+          type="button"
           title="Add Todo"
-          onclick="window.menavTodoApp.toggleInput()"
+          aria-label="添加待办事项"
+          aria-controls="todo-input-container"
+          aria-expanded="false"
+          data-todo-toggle-input
         >
-          <span class="fas fa-plus"></span>
+          <span class="fas fa-plus" aria-hidden="true"></span>
         </button>
       </div>
 
       <div class="panel-content-wrapper">
+        <div class="panel-header">
+          <h2 id="todo-panel-title">
+            <i class="fas fa-list-check" aria-hidden="true"></i>待办事项
+          </h2>
+        </div>
         <div class="panel-content custom-scrollbar" id="todo-list"></div>
 
         <div
@@ -149,165 +155,18 @@ const globalTools: GlobalTool[] = [
           id="todo-input-container"
           style="display: none; padding: var(--spacing-md);"
         >
-          <input type="text" class="todo-input" id="todo-input-field" placeholder="New task..." />
-          <button class="todo-add-btn-small" type="button">
-            <span class="fas fa-arrow-right"></span>
+          <input
+            type="text"
+            class="todo-input"
+            id="todo-input-field"
+            placeholder="New task..."
+            aria-label="新待办事项"
+          />
+          <button class="todo-add-btn-small" type="button" aria-label="添加待办事项">
+            <span class="fas fa-arrow-right" aria-hidden="true"></span>
           </button>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </div>
-
-<script is:inline>
-  (function () {
-    var TODO_STORAGE_KEY = 'menav_todos_v1';
-
-    window.menavTodoApp = {
-      todos: [],
-      isIgnoreBlur: false,
-
-      init: function () {
-        this.load();
-        this.bindInputEvents();
-        this.render();
-      },
-
-      bindInputEvents: function () {
-        var field = document.getElementById('todo-input-field');
-        var button = document.querySelector('.todo-add-btn-small');
-        if (field) {
-          field.addEventListener('keydown', this.handleInputKey.bind(this));
-          field.addEventListener('blur', this.handleBlur.bind(this));
-        }
-        if (button) {
-          button.addEventListener('mousedown', this.preventBlur.bind(this));
-          button.addEventListener('click', this.addFromInput.bind(this));
-        }
-      },
-
-      load: function () {
-        try {
-          var raw = localStorage.getItem(TODO_STORAGE_KEY);
-          this.todos = raw
-            ? JSON.parse(raw)
-            : [
-                { text: 'Drink Water', done: false },
-                { text: 'Explore MeNav', done: true },
-              ];
-        } catch (e) {
-          this.todos = [];
-        }
-      },
-
-      save: function () {
-        try {
-          localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(this.todos));
-        } catch (e) {}
-      },
-
-      toggleInput: function () {
-        var container = document.getElementById('todo-input-container');
-        var field = document.getElementById('todo-input-field');
-        if (!container || !field) return;
-        if (container.style.display === 'none') {
-          container.style.display = 'flex';
-          field.focus();
-        } else {
-          container.style.display = 'none';
-        }
-      },
-
-      handleBlur: function () {
-        var self = this;
-        setTimeout(function () {
-          if (self.isIgnoreBlur) {
-            self.isIgnoreBlur = false;
-            return;
-          }
-          var container = document.getElementById('todo-input-container');
-          if (container) container.style.display = 'none';
-        }, 200);
-      },
-
-      preventBlur: function () {
-        this.isIgnoreBlur = true;
-      },
-
-      addFromInput: function () {
-        var input = document.getElementById('todo-input-field');
-        if (input && input.value.trim()) {
-          this.todos.push({ text: input.value.trim(), done: false });
-          input.value = '';
-          this.save();
-          this.render();
-          var list = document.getElementById('todo-list');
-          if (list) list.scrollTop = list.scrollHeight;
-          input.focus();
-        }
-      },
-
-      handleInputKey: function (e) {
-        if (e.key === 'Enter') this.addFromInput();
-      },
-
-      toggle: function (index) {
-        this.todos[index].done = !this.todos[index].done;
-        this.save();
-        this.render();
-      },
-
-      remove: function (index, e) {
-        if (e) e.stopPropagation();
-        this.todos.splice(index, 1);
-        this.save();
-        this.render();
-      },
-
-      render: function () {
-        var container = document.getElementById('todo-list');
-        if (!container) return;
-        if (this.todos.length === 0) {
-          container.innerHTML = '<div class="empty-todo-hint">No tasks.</div>';
-          return;
-        }
-        container.innerHTML = this.todos
-          .map(
-            function (todo, index) {
-              return (
-                '<div class="todo-item ' +
-                (todo.done ? 'done' : '') +
-                '" onclick="window.menavTodoApp.toggle(' +
-                index +
-                ')">' +
-                '<div class="todo-checkbox ' +
-                (todo.done ? 'checked' : '') +
-                '">' +
-                (todo.done ? '<span class="fas fa-check"></span>' : '') +
-                '</div>' +
-                '<div class="todo-text" title="' +
-                this.escapeHtml(todo.text) +
-                '">' +
-                this.escapeHtml(todo.text) +
-                '</div>' +
-                '<button class="todo-delete-btn" onclick="window.menavTodoApp.remove(' +
-                index +
-                ', event)" title="Delete">' +
-                '<span class="fas fa-trash-alt"></span>' +
-                '</button></div>'
-              );
-            }.bind(this)
-          )
-          .join('');
-      },
-
-      escapeHtml: function (text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      },
-    };
-
-    window.menavTodoApp.init();
-  })();
-</script>
