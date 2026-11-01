@@ -24,15 +24,6 @@ categories:
         url: https://new.web.cafe/ # http/https URL（favicon 模式将尝试加载站点图标）
         icon: fas fa-mug-hot # 手动图标：manual 模式使用；favicon 模式下作为回退
         description: SEO工具站 # 站点描述
-      - name: Linux.do # 站点名称
-        url: https://linux.do/ # http/https URL（favicon 模式将尝试加载站点图标）
-        icon: fab fa-linux # 手动图标：manual 模式使用；favicon 模式下作为回退
-        description: 新的理想型社区 # 站点描述
-      - name: Menav
-        url: https://carylabs.github.io/nav
-        icon: fas fa-star
-        description: 个人导航站
-        faviconUrl: assets/menav.svg
       - name: Google
         url: https://www.google.com
         icon: fab fa-google
@@ -49,10 +40,6 @@ categories:
         url: https://chat.openai.com
         icon: fas fa-robot
         description: AI智能助手
-      - name: YouTube
-        url: https://www.youtube.com
-        icon: fab fa-youtube
-        description: 视频分享平台
       - name: Twitter
         url: https://twitter.com
         icon: fab fa-twitter
@@ -61,9 +48,42 @@ categories:
         url: https://www.reddit.com
         icon: fab fa-reddit
         description: 社区讨论平台
+      - name: easystarter
+        url: https://www.easystarter.dev/zh/trends
+        icon: fas fa-arrow-trend-up
+        description: easystarter趋势
+      - name: huggingface
+        url: https://huggingface.co/
+        icon: fas fa-robot
+        description: AI 模型与数据集社区
+      - name: producthunt
+        url: https://www.producthunt.com/
+        icon: fas fa-rocket
+        description: 新产品发布与发现
+      - name: starterstory
+        url: https://www.starterstory.com/
+        icon: fas fa-seedling
+        description: 独立创业者案例库
+      - name: 哥伦布
+        url: https://columbus.tools/ai-trends-rank
+        icon: fas fa-fire
+        description: 哥伦布热榜数据
+      - name: Menav
+        url: https://carylabs.github.io/nav
+        icon: fas fa-star
+        description: 个人导航站
+        faviconUrl: assets/menav.svg
   - name: 学习资源
     icon: fas fa-graduation-cap
     sites:
+      - name: Linux.do
+        url: https://linux.do/
+        icon: fab fa-linux
+        description: 新的理想型社区
+      - name: YouTube
+        url: https://www.youtube.com
+        icon: fab fa-youtube
+        description: 视频分享平台
       - name: 哔哩哔哩
         url: https://www.bilibili.com
         icon: fas fa-play-circle
