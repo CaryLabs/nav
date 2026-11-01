@@ -97,22 +97,18 @@ test('v2 与 v1 均损坏时 load 返回空数组且不覆盖原始数据', () =
   assert.equal(storage.getItem(LEGACY_TODO_STORAGE_KEY), 'not-json');
 });
 
-test('首次访问应写入默认示例，保留原有完成态', () => {
+test('首次访问应显示空列表并写入空 v2', () => {
   const storage = createStorage();
   const result = loadTodoItems(storage);
 
   assert.equal(result.source, 'seed');
   assert.equal(result.shouldPersist, true);
   assert.equal(result.writeFailed, false);
-  assert.equal(result.items.length, 2);
-  assert.equal(result.items[0].text, 'Drink Water');
-  assert.equal(result.items[0].done, false);
-  assert.equal(result.items[1].text, 'Explore MeNav');
-  assert.equal(result.items[1].done, true);
+  assert.deepEqual(result.items, []);
 
   const stored = JSON.parse(storage.getItem(TODO_STORAGE_KEY));
   assert.equal(stored.version, 2);
-  assert.equal(stored.items.length, 2);
+  assert.deepEqual(stored.items, []);
 });
 
 test('重复 ID 应被修正，写入后仍保留合法条目', () => {
@@ -156,9 +152,9 @@ test('v2 中非法条目应被过滤，合法条目保留', () => {
   assert.equal(result.items[1].done, true);
 });
 
-test('存储不可用时应回退默认示例，写入返回 false 且不抛错', () => {
+test('存储不可用时应回退为空列表，写入返回 false 且不抛错', () => {
   const items = readTodoItems(null);
-  assert.equal(items.items.length, 2);
+  assert.deepEqual(items.items, []);
   assert.equal(items.source, 'unavailable');
   assert.equal(writeTodoItems(null, items.items), false);
 });
@@ -169,7 +165,7 @@ test('getItem 抛错时应标记 unavailable，不回写也不覆盖', () => {
 
   const result = loadTodoItems(storage);
   assert.equal(result.source, 'unavailable');
-  assert.equal(result.items.length, 2);
+  assert.deepEqual(result.items, []);
   assert.equal(storage.stats.sets, 0);
 });
 
@@ -178,7 +174,7 @@ test('setItem 抛错时应保持可渲染数据，write 返回 false', () => {
   storage.failOnSet = true;
 
   const result = loadTodoItems(storage);
-  assert.equal(result.items.length, 2);
+  assert.deepEqual(result.items, []);
   assert.equal(result.writeFailed, true);
   assert.equal(writeTodoItems(storage, result.items), false);
   assert.equal(storage.getItem(TODO_STORAGE_KEY), null);
@@ -193,4 +189,20 @@ test('相同内容写入应跳过 setItem，避免无意义的跨标签事件', 
 
   assert.equal(writeTodoItems(storage, items), true);
   assert.equal(storage.stats.sets, setsAfterFirstWrite);
+});
+
+test('新增条目应可原样读回，删空后保持空而不回退默认', () => {
+  const storage = createStorage();
+  assert.deepEqual(loadTodoItems(storage).items, []);
+
+  const items = [{ id: 'fixed-id', text: '持久化验证', done: false }];
+  assert.equal(writeTodoItems(storage, items), true);
+  assert.deepEqual(readTodoItems(storage).items, items);
+
+  // v2 空数组是合法状态（用户删光了），不能再当作“未初始化”重新播种。
+  assert.equal(writeTodoItems(storage, []), true);
+  const cleared = readTodoItems(storage);
+  assert.deepEqual(cleared.items, []);
+  assert.equal(cleared.source, 'v2');
+  assert.equal(cleared.shouldPersist, false);
 });

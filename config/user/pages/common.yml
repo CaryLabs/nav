@@ -72,7 +72,7 @@ categories:
         url: https://carylabs.github.io/nav
         icon: fas fa-star
         description: 个人导航站
-        faviconUrl: assets/menav.svg
+        faviconUrl: /menav.svg
   - name: 学习资源
     icon: fas fa-graduation-cap
     sites:

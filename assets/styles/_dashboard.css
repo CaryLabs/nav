@@ -576,10 +576,25 @@ html.light-theme .dashboard-clock-card {
     height: 100%;
   }
 
-  .global-tools-card,
-  .dashboard-panel {
-    height: 100%;
+  /* 行高由左栏内容决定：右栏脱离文档流后不再把整行撑高，
+     待办条数再多也只在面板内部滚动，两栏始终等高。 */
+  .dashboard-stats {
+    position: relative;
     min-height: clamp(300px, 32vw, 420px);
+  }
+
+  .dashboard-intro > .global-tools-card {
+    flex: 1;
+    min-height: 0;
+    /* 分类卡默认的 1.2rem 下边距会让它比同行矮约 19px（_category.css 后加载，需提高优先级） */
+    margin: 0;
+  }
+
+  .dashboard-panel {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    min-height: 0;
   }
 }
 

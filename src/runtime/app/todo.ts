@@ -28,10 +28,8 @@ const { SELECTORS, byId, qs, qsa } =
 
 const TODO_STORAGE_KEY = 'menav_todos_v2';
 const LEGACY_TODO_STORAGE_KEY = 'menav_todos_v1';
-const DEFAULT_TODOS: Array<Pick<TodoItem, 'text' | 'done'>> = [
-  { text: 'Drink Water', done: false },
-  { text: 'Explore MeNav', done: true },
-];
+// 默认不预置条目：首次访问显示空状态，数据只来自用户的添加操作。
+const DEFAULT_TODOS: Array<Pick<TodoItem, 'text' | 'done'>> = [];
 
 function createTodoId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -186,7 +184,7 @@ function initTodo(): void {
     if (todos.length === 0) {
       const hint = document.createElement('div');
       hint.className = 'empty-todo-hint';
-      hint.textContent = 'No tasks.';
+      hint.textContent = '暂无待办';
       container.replaceChildren(hint);
       return;
     }

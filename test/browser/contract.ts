@@ -355,6 +355,59 @@ async function runTodoContract(page, baseUrl, messages) {
   await openPage(page, baseUrl, '/');
   await page.evaluate(() => {
     localStorage.removeItem('menav_todos_v2');
+    localStorage.removeItem('menav_todos_v1');
+  });
+
+  // 默认无条目：首次访问应显示空状态，并把空 v2 落盘。
+  await openPage(page, baseUrl, '/');
+  await page.waitForFunction(
+    () => document.querySelector('#todo-list')?.dataset.todoInitialized === 'true'
+  );
+
+  const firstVisit = await page.evaluate(() => ({
+    hint: document.querySelector('#todo-list .empty-todo-hint')?.textContent?.trim() || '',
+    items: document.querySelectorAll('.todo-item').length,
+    v2: JSON.parse(localStorage.getItem('menav_todos_v2') || 'null'),
+  }));
+  assert.equal(firstVisit.items, 0, '默认待办应为空');
+  assert.equal(firstVisit.hint, '暂无待办');
+  assert.equal(firstVisit.v2?.version, 2);
+  assert.deepEqual(firstVisit.v2?.items, [], '首次访问应落盘空 v2');
+
+  // 新增后刷新仍在；删到空后刷新保持空，不重新播种。
+  await page.evaluate(() => {
+    document.querySelector('[data-todo-toggle-input]')?.click();
+    const input = document.querySelector('#todo-input-field');
+    input.value = '持久化验证';
+    document.querySelector('.todo-add-btn-small')?.click();
+  });
+  await page.waitForFunction(() => document.querySelectorAll('.todo-item').length === 1);
+
+  await openPage(page, baseUrl, '/');
+  await page.waitForFunction(() => document.querySelectorAll('.todo-item').length === 1);
+  assert.equal(
+    await page.evaluate(() => document.querySelector('.todo-text')?.textContent || ''),
+    '持久化验证',
+    '新增条目应在刷新后保留'
+  );
+
+  const onlyItem = page.locator('.todo-item').first();
+  await onlyItem.hover();
+  await onlyItem.locator('.todo-delete-btn').click();
+  await page.waitForFunction(() => document.querySelectorAll('.todo-item').length === 0);
+
+  await openPage(page, baseUrl, '/');
+  await page.waitForFunction(
+    () => document.querySelector('#todo-list')?.dataset.todoInitialized === 'true'
+  );
+  assert.equal(
+    await page.evaluate(() => document.querySelectorAll('.todo-item').length),
+    0,
+    '删除到空后不应回退默认示例'
+  );
+
+  await page.evaluate(() => {
+    localStorage.removeItem('menav_todos_v2');
     localStorage.setItem(
       'menav_todos_v1',
       JSON.stringify([
