@@ -38,7 +38,7 @@
 - 与 [MarksVault](https://github.com/rbetree/MarksVault) 浏览器扩展集成，支持自动推送书签 HTML 文件
 - 可部署到GitHub Pages或任何类似的CI/CD服务
 
-> 历史更新记录已迁移至 [`CHANGELOG.md`](CHANGELOG.md)，README 不再维护该部分。
+> 历史更新记录已迁移至 [`docs/CHANGELOG.md`](docs/CHANGELOG.md)，README 不再维护该部分。
 
 
 ## 技术栈
@@ -65,8 +65,11 @@ nav/
 
 ## 文档导航
 
-- 项目路线图（阶段目标 / 优先级 / 非目标）：[`ROADMAP.md`](ROADMAP.md)
-- 历史更新记录（README 不再维护）：[`CHANGELOG.md`](CHANGELOG.md)
+- 使用者手册（页面功能与日常操作）：[`docs/USERGUIDE.md`](docs/USERGUIDE.md)
+- 个人配置操作指南（初始化与修改 `config/user/`）：[`docs/操作指南.md`](docs/操作指南.md)
+- 栏位维护开发手册（每个栏位由哪个文件控制）：[`docs/DEVELOPGUIDE.md`](docs/DEVELOPGUIDE.md)
+- 项目路线图（阶段目标 / 优先级 / 非目标）：[`docs/ROADMAP.md`](docs/ROADMAP.md)
+- 历史更新记录（README 不再维护）：[`docs/CHANGELOG.md`](docs/CHANGELOG.md)
 - 更新说明2025/12/27（兼容性移除 / 迁移指南）：[`config/update-instructions-20251227.md`](config/update-instructions-20251227.md)
 - 配置系统（完全替换策略、目录结构、示例）：[`config/README.md`](config/README.md)
 - 书签导入（格式要求、流程、常见问题）：[`bookmarks/README.md`](bookmarks/README.md)
