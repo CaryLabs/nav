@@ -55,7 +55,7 @@
 
 关联 Issue：[#30](https://github.com/rbetree/menav/issues/30)
 
-细节见：[`config/update-instructions-20260102.md`](config/update-instructions-20260102.md)
+细节见：[`config/update-instructions-20260102.md`](../config/update-instructions-20260102.md)
 
 **1. 外部资源可用性**
 
@@ -74,7 +74,7 @@
 
 ### 2025/12/27
 
-细节见：[`config/update-instructions-20251227.md`](config/update-instructions-20251227.md)
+细节见：[`config/update-instructions-20251227.md`](../config/update-instructions-20251227.md)
 
 **1. 页面模板差异化改进（Phase 1/Phase 2）**
 

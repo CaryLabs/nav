@@ -29,9 +29,8 @@ public/favicon.ico
 Thumbs.db
 
 
-# 个人笔记
-docs/
-docs/local/
+# 个人笔记与本地流程产物（仅忽略 docs/ 下的子目录；docs/ 根目录的 .md 文档需入库）
+docs/*/
 docs/*.local.md
 
 # 本地任务记录

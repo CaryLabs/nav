@@ -1,8 +1,8 @@
 # MeNav 栏位维护开发手册
 
-面向维护者：本文按「页面上看到的一个栏位」组织，说明它由哪个文件控制、怎么增减条目、改完怎么验证。
+面向维护者：本文按「页面上看到的一个栏位」组织，说明它由哪个文件控制、怎么增减条目、改完怎么验证。文中路径均相对仓库根目录。
 
-配套文档：`README.md`（部署与功能）、`USERGUIDE.md`（使用者视角）、`config/README.md`（配置字段全集）、`bookmarks/README.md`（书签导入细节）。
+配套文档：`README.md`（部署与功能）、`docs/USERGUIDE.md`（使用者视角）、`config/README.md`（配置字段全集）、`bookmarks/README.md`（书签导入细节）。
 
 ---
 
